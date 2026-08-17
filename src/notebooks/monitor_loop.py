@@ -15,11 +15,24 @@ dbutils.widgets.text("max_iterations", "0", "Max iterations (0 = forever)")
 
 # COMMAND ----------
 
+import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-from src.monitor import load_sql, resolve_sql_dir
+nb_path = (
+    dbutils.notebook.entry_point.getDbutils()
+    .notebook()
+    .getContext()
+    .notebookPath()
+    .get()
+)
+repo_root = "/Workspace" + nb_path.rsplit("/src/", 1)[0]
+src_root = f"{repo_root}/src"
+if src_root not in sys.path:
+    sys.path.insert(0, src_root)
+
+from monitor import load_sql, resolve_sql_dir
 
 catalog = dbutils.widgets.get("catalog").strip()
 schema = dbutils.widgets.get("schema").strip()
@@ -32,14 +45,7 @@ if not workspace_id:
 if frequency_seconds < 60:
     raise ValueError("monitor_frequency_seconds must be >= 60.")
 
-notebook_path = (
-    dbutils.notebook.entry_point.getDbutils()
-    .notebook()
-    .getContext()
-    .notebookPath()
-    .get()
-)
-sql_dir = resolve_sql_dir(f"/Workspace{notebook_path}")
+sql_dir = resolve_sql_dir(f"/Workspace{nb_path}")
 
 replacements = {
     "catalog": catalog,
