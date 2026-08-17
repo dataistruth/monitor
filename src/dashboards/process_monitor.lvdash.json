@@ -1,0 +1,238 @@
+{
+  "datasets": [
+    {
+      "name": "unified_runs",
+      "displayName": "Unified runs",
+      "query": "SELECT\n  run_category,\n  entity_name,\n  status,\n  trigger_type,\n  execution_type,\n  start_time,\n  end_time,\n  duration_seconds,\n  executed_by,\n  termination_code\nFROM unified_runs\nORDER BY start_time DESC\nLIMIT 5000"
+    },
+    {
+      "name": "run_summary",
+      "displayName": "Run summary",
+      "query": "SELECT\n  COUNT(*) AS total_runs,\n  SUM(CASE WHEN status IN ('FAILED', 'ERROR') THEN 1 ELSE 0 END) AS failed_runs,\n  SUM(CASE WHEN status IN ('SUCCEEDED', 'SUCCESS') THEN 1 ELSE 0 END) AS succeeded_runs,\n  SUM(CASE WHEN status = 'RUNNING' THEN 1 ELSE 0 END) AS running_runs,\n  ROUND(AVG(duration_seconds), 0) AS avg_duration_seconds\nFROM unified_runs\nWHERE start_time >= CURRENT_TIMESTAMP() - INTERVAL 24 HOURS"
+    },
+    {
+      "name": "runs_by_category",
+      "displayName": "Runs by category",
+      "query": "SELECT\n  run_category,\n  COUNT(*) AS runs,\n  SUM(CASE WHEN status IN ('FAILED', 'ERROR') THEN 1 ELSE 0 END) AS failed\nFROM unified_runs\nWHERE start_time >= CURRENT_TIMESTAMP() - INTERVAL 7 DAYS\nGROUP BY run_category\nORDER BY runs DESC"
+    }
+  ],
+  "pages": [
+    {
+      "name": "main",
+      "displayName": "Process Monitor",
+      "layout": [
+        {
+          "position": { "x": 0, "y": 0, "width": 6, "height": 1 },
+          "widget": {
+            "name": "title",
+            "textbox_spec": "# Process Monitor\nJobs, pipelines, and notebook adhoc runs from Lakeflow + audit (last 30 days)."
+          }
+        },
+        {
+          "position": { "x": 0, "y": 1, "width": 1, "height": 2 },
+          "widget": {
+            "name": "kpi_total",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "run_summary",
+                  "disaggregated": false,
+                  "fields": [
+                    { "expression": "`total_runs`", "name": "total_runs" }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "frame": { "showTitle": true, "title": "Runs (24h)" },
+              "encodings": {
+                "value": { "fieldName": "total_runs", "displayName": "Runs" }
+              }
+            }
+          }
+        },
+        {
+          "position": { "x": 1, "y": 1, "width": 1, "height": 2 },
+          "widget": {
+            "name": "kpi_failed",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "run_summary",
+                  "disaggregated": false,
+                  "fields": [
+                    { "expression": "`failed_runs`", "name": "failed_runs" }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "frame": { "showTitle": true, "title": "Failed (24h)" },
+              "encodings": {
+                "value": { "fieldName": "failed_runs", "displayName": "Failed" }
+              }
+            }
+          }
+        },
+        {
+          "position": { "x": 2, "y": 1, "width": 1, "height": 2 },
+          "widget": {
+            "name": "kpi_ok",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "run_summary",
+                  "disaggregated": false,
+                  "fields": [
+                    { "expression": "`succeeded_runs`", "name": "succeeded_runs" }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "frame": { "showTitle": true, "title": "Succeeded (24h)" },
+              "encodings": {
+                "value": { "fieldName": "succeeded_runs", "displayName": "Succeeded" }
+              }
+            }
+          }
+        },
+        {
+          "position": { "x": 3, "y": 1, "width": 1, "height": 2 },
+          "widget": {
+            "name": "kpi_running",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "run_summary",
+                  "disaggregated": false,
+                  "fields": [
+                    { "expression": "`running_runs`", "name": "running_runs" }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "frame": { "showTitle": true, "title": "Running (24h)" },
+              "encodings": {
+                "value": { "fieldName": "running_runs", "displayName": "Running" }
+              }
+            }
+          }
+        },
+        {
+          "position": { "x": 4, "y": 1, "width": 2, "height": 2 },
+          "widget": {
+            "name": "kpi_duration",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "run_summary",
+                  "disaggregated": false,
+                  "fields": [
+                    { "expression": "`avg_duration_seconds`", "name": "avg_duration_seconds" }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "frame": { "showTitle": true, "title": "Avg duration sec (24h)" },
+              "encodings": {
+                "value": { "fieldName": "avg_duration_seconds", "displayName": "Avg duration (s)" }
+              }
+            }
+          }
+        },
+        {
+          "position": { "x": 0, "y": 3, "width": 2, "height": 4 },
+          "widget": {
+            "name": "by_category",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "runs_by_category",
+                  "disaggregated": true,
+                  "fields": [
+                    { "expression": "`run_category`", "name": "run_category" },
+                    { "expression": "`runs`", "name": "runs" },
+                    { "expression": "`failed`", "name": "failed" }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "widgetType": "table",
+              "frame": { "showTitle": true, "title": "By category (7d)" },
+              "itemsPerPage": 10,
+              "encodings": {
+                "columns": [
+                  { "fieldName": "run_category", "displayName": "Category", "type": "string", "visible": true },
+                  { "fieldName": "runs", "displayName": "Runs", "type": "integer", "visible": true },
+                  { "fieldName": "failed", "displayName": "Failed", "type": "integer", "visible": true }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "position": { "x": 2, "y": 3, "width": 4, "height": 8 },
+          "widget": {
+            "name": "runs_table",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "unified_runs",
+                  "disaggregated": true,
+                  "fields": [
+                    { "expression": "`start_time`", "name": "start_time" },
+                    { "expression": "`run_category`", "name": "run_category" },
+                    { "expression": "`entity_name`", "name": "entity_name" },
+                    { "expression": "`status`", "name": "status" },
+                    { "expression": "`duration_seconds`", "name": "duration_seconds" },
+                    { "expression": "`trigger_type`", "name": "trigger_type" },
+                    { "expression": "`executed_by`", "name": "executed_by" }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "widgetType": "table",
+              "frame": { "showTitle": true, "title": "Recent runs" },
+              "itemsPerPage": 50,
+              "encodings": {
+                "columns": [
+                  { "fieldName": "start_time", "displayName": "Start", "type": "datetime", "visible": true },
+                  { "fieldName": "run_category", "displayName": "Category", "type": "string", "visible": true },
+                  { "fieldName": "entity_name", "displayName": "Entity", "type": "string", "visible": true },
+                  { "fieldName": "status", "displayName": "Status", "type": "string", "visible": true },
+                  { "fieldName": "duration_seconds", "displayName": "Duration (s)", "type": "integer", "visible": true },
+                  { "fieldName": "trigger_type", "displayName": "Trigger", "type": "string", "visible": true },
+                  { "fieldName": "executed_by", "displayName": "Executed by", "type": "string", "visible": true }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

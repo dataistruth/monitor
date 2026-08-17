@@ -1,0 +1,10 @@
+[project]
+name = "monitor"
+version = "0.1.0"
+description = "Databricks system-table monitoring (cluster + process)"
+requires-python = ">=3.10"
+
+[tool.monitor]
+# Default loop sleep for the refresh job.
+# Bundle variable `monitor_frequency_seconds` overrides this at deploy time.
+monitor_frequency_seconds = 300

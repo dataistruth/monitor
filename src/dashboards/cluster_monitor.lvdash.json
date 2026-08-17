@@ -1,0 +1,180 @@
+{
+  "datasets": [
+    {
+      "name": "cluster_hourly",
+      "displayName": "Cluster hourly",
+      "query": "SELECT\n  cluster_name,\n  cluster_source,\n  owned_by,\n  dbr_version,\n  hour_utc,\n  active_minutes,\n  active_instances,\n  ROUND(node_hours, 2) AS node_hours,\n  avg_cpu_pct,\n  peak_cpu_pct,\n  avg_memory_pct,\n  peak_memory_pct\nFROM v_cluster_hourly\nORDER BY hour_utc DESC\nLIMIT 5000"
+    },
+    {
+      "name": "cluster_summary",
+      "displayName": "Cluster summary",
+      "query": "SELECT\n  COUNT(DISTINCT cluster_id) AS clusters,\n  ROUND(SUM(node_hours), 1) AS total_node_hours,\n  ROUND(AVG(avg_cpu_pct), 1) AS avg_cpu_pct,\n  ROUND(AVG(avg_memory_pct), 1) AS avg_memory_pct\nFROM v_cluster_hourly\nWHERE hour_utc >= CURRENT_TIMESTAMP() - INTERVAL 24 HOURS"
+    }
+  ],
+  "pages": [
+    {
+      "name": "main",
+      "displayName": "Cluster Monitor",
+      "layout": [
+        {
+          "position": { "x": 0, "y": 0, "width": 6, "height": 1 },
+          "widget": {
+            "name": "title",
+            "textbox_spec": "# Cluster Monitor\nHourly CPU / memory / node-hours from `system.compute` (last 90 days)."
+          }
+        },
+        {
+          "position": { "x": 0, "y": 1, "width": 1, "height": 2 },
+          "widget": {
+            "name": "kpi_clusters",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "cluster_summary",
+                  "disaggregated": false,
+                  "fields": [
+                    { "expression": "`clusters`", "name": "clusters" }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "frame": { "showTitle": true, "title": "Clusters (24h)" },
+              "encodings": {
+                "value": { "fieldName": "clusters", "displayName": "Clusters" }
+              }
+            }
+          }
+        },
+        {
+          "position": { "x": 1, "y": 1, "width": 1, "height": 2 },
+          "widget": {
+            "name": "kpi_node_hours",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "cluster_summary",
+                  "disaggregated": false,
+                  "fields": [
+                    { "expression": "`total_node_hours`", "name": "total_node_hours" }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "frame": { "showTitle": true, "title": "Node hours (24h)" },
+              "encodings": {
+                "value": { "fieldName": "total_node_hours", "displayName": "Node hours" }
+              }
+            }
+          }
+        },
+        {
+          "position": { "x": 2, "y": 1, "width": 1, "height": 2 },
+          "widget": {
+            "name": "kpi_cpu",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "cluster_summary",
+                  "disaggregated": false,
+                  "fields": [
+                    { "expression": "`avg_cpu_pct`", "name": "avg_cpu_pct" }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "frame": { "showTitle": true, "title": "Avg CPU % (24h)" },
+              "encodings": {
+                "value": { "fieldName": "avg_cpu_pct", "displayName": "Avg CPU %" }
+              }
+            }
+          }
+        },
+        {
+          "position": { "x": 3, "y": 1, "width": 1, "height": 2 },
+          "widget": {
+            "name": "kpi_mem",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "cluster_summary",
+                  "disaggregated": false,
+                  "fields": [
+                    { "expression": "`avg_memory_pct`", "name": "avg_memory_pct" }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "frame": { "showTitle": true, "title": "Avg memory % (24h)" },
+              "encodings": {
+                "value": { "fieldName": "avg_memory_pct", "displayName": "Avg memory %" }
+              }
+            }
+          }
+        },
+        {
+          "position": { "x": 0, "y": 3, "width": 6, "height": 8 },
+          "widget": {
+            "name": "hourly_table",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "cluster_hourly",
+                  "disaggregated": true,
+                  "fields": [
+                    { "expression": "`hour_utc`", "name": "hour_utc" },
+                    { "expression": "`cluster_name`", "name": "cluster_name" },
+                    { "expression": "`owned_by`", "name": "owned_by" },
+                    { "expression": "`active_minutes`", "name": "active_minutes" },
+                    { "expression": "`active_instances`", "name": "active_instances" },
+                    { "expression": "`node_hours`", "name": "node_hours" },
+                    { "expression": "`avg_cpu_pct`", "name": "avg_cpu_pct" },
+                    { "expression": "`peak_cpu_pct`", "name": "peak_cpu_pct" },
+                    { "expression": "`avg_memory_pct`", "name": "avg_memory_pct" },
+                    { "expression": "`peak_memory_pct`", "name": "peak_memory_pct" }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "widgetType": "table",
+              "frame": { "showTitle": true, "title": "Hourly cluster utilization" },
+              "itemsPerPage": 50,
+              "encodings": {
+                "columns": [
+                  { "fieldName": "hour_utc", "displayName": "Hour (UTC)", "type": "datetime", "visible": true },
+                  { "fieldName": "cluster_name", "displayName": "Cluster", "type": "string", "visible": true },
+                  { "fieldName": "owned_by", "displayName": "Owner", "type": "string", "visible": true },
+                  { "fieldName": "active_minutes", "displayName": "Active minutes", "type": "integer", "visible": true },
+                  { "fieldName": "active_instances", "displayName": "Instances", "type": "integer", "visible": true },
+                  { "fieldName": "node_hours", "displayName": "Node hours", "type": "float", "visible": true },
+                  { "fieldName": "avg_cpu_pct", "displayName": "Avg CPU %", "type": "float", "visible": true },
+                  { "fieldName": "peak_cpu_pct", "displayName": "Peak CPU %", "type": "float", "visible": true },
+                  { "fieldName": "avg_memory_pct", "displayName": "Avg mem %", "type": "float", "visible": true },
+                  { "fieldName": "peak_memory_pct", "displayName": "Peak mem %", "type": "float", "visible": true }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

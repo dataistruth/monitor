@@ -1,0 +1,37 @@
+resources:
+  jobs:
+    monitor_refresh:
+      name: monitor-refresh-${bundle.target}
+      description: >
+        Looping refresh of cluster + process monitoring objects.
+        Frequency controlled by monitor_frequency_seconds.
+        Runs on serverless compute.
+      tags:
+        project: monitor
+        purpose: system-table-refresh
+      parameters:
+        catalog: ${var.catalog}
+        schema: ${var.schema}
+        workspace_id: ${var.workspace_id}
+        monitor_frequency_seconds: ${var.monitor_frequency_seconds}
+        max_iterations: "0"
+      tasks:
+        - task_key: refresh_loop
+          notebook_task:
+            notebook_path: ../src/notebooks/monitor_loop.py
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+              workspace_id: "{{job.parameters.workspace_id}}"
+              monitor_frequency_seconds: "{{job.parameters.monitor_frequency_seconds}}"
+              max_iterations: "{{job.parameters.max_iterations}}"
+          environment_key: default
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: "4"
+      max_concurrent_runs: 1
+      # Long-running loop: cancel the run to stop. Change frequency via
+      # job parameter monitor_frequency_seconds (or redeploy the bundle var).
+      timeout_seconds: 0
+      performance_target: STANDARD

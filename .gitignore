@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+.databricks/
+bundle_config_schema.json
+*.egg-info/
+.pytest_cache/
+.idea/

@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=./bundle_config_schema.json
+bundle:
+  name: monitor
+
+include:
+  - resources/*.yml
+
+variables:
+  catalog:
+    description: Unity Catalog for monitoring tables/views
+    default: main
+  schema:
+    description: Schema for monitoring tables/views
+    default: monitoring
+  workspace_id:
+    description: Databricks workspace_id filter for system.compute tables
+    default: ""
+  warehouse_id:
+    description: SQL warehouse ID for dashboards
+    default: ""
+  monitor_frequency_seconds:
+    description: Seconds between refresh iterations in the monitor loop job
+    default: 300
+
+sync:
+  include:
+    - src/**
+  exclude:
+    - src/**/__pycache__
+    - src/**/*.pyc
+
+targets:
+  dev:
+    default: true
+    mode: development
+    workspace:
+      host: https://<dev-workspace>.cloud.databricks.com
+      profile: DEFAULT
+    variables:
+      catalog: main
+      schema: monitoring_dev
+      monitor_frequency_seconds: 300
+
+  prod:
+    mode: production
+    workspace:
+      host: https://<prod-workspace>.cloud.databricks.com
+      profile: DEFAULT
+    variables:
+      catalog: main
+      schema: monitoring
+      monitor_frequency_seconds: 300
