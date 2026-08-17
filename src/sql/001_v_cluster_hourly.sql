@@ -1,8 +1,6 @@
 -- Cluster hourly utilization from system.compute tables.
 -- Placeholders: {{catalog}}, {{schema}}, {{workspace_id}}
 
-CREATE SCHEMA IF NOT EXISTS {{catalog}}.{{schema}};
-
 CREATE OR REPLACE VIEW {{catalog}}.{{schema}}.v_cluster_hourly AS
 WITH latest_clusters AS (
   SELECT *

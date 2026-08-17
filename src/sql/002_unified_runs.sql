@@ -1,8 +1,6 @@
 -- Unified process runs: jobs, pipelines, notebook adhoc.
 -- Placeholders: {{catalog}}, {{schema}}
 
-CREATE SCHEMA IF NOT EXISTS {{catalog}}.{{schema}};
-
 CREATE OR REPLACE TABLE {{catalog}}.{{schema}}.unified_runs AS
 WITH latest_jobs AS (
   SELECT *
