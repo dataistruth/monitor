@@ -1,7 +1,7 @@
 resources:
   dashboards:
     cluster_monitor:
-      display_name: Cluster Monitor
+      display_name: Cluster Monitor (${var.catalog}.${var.schema})
       file_path: ../src/dashboards/cluster_monitor.lvdash.json
       warehouse_id: ${var.warehouse_id}
       dataset_catalog: ${var.catalog}
@@ -11,7 +11,7 @@ resources:
           group_name: ${var.grant_group}
 
     process_monitor:
-      display_name: Process Monitor
+      display_name: Process Monitor (${var.catalog}.${var.schema})
       file_path: ../src/dashboards/process_monitor.lvdash.json
       warehouse_id: ${var.warehouse_id}
       dataset_catalog: ${var.catalog}
