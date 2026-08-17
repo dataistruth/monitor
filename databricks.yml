@@ -21,6 +21,9 @@ variables:
   monitor_frequency_seconds:
     description: Seconds between refresh iterations in the monitor loop job
     default: 300
+  grant_group:
+    description: Databricks group granted CAN_MANAGE on jobs and dashboards
+    default: ipacs_dev_team
 
 sync:
   include:
@@ -40,6 +43,7 @@ targets:
       catalog: main
       schema: monitoring_dev
       monitor_frequency_seconds: 300
+      grant_group: ipacs_dev_team
 
   prod:
     mode: production
@@ -50,3 +54,4 @@ targets:
       catalog: main
       schema: monitoring
       monitor_frequency_seconds: 300
+      grant_group: ipacs_dev_team

@@ -9,6 +9,9 @@ resources:
       tags:
         project: monitor
         purpose: system-table-refresh
+      permissions:
+        - level: CAN_MANAGE
+          group_name: ${var.grant_group}
       parameters:
         catalog: ${var.catalog}
         schema: ${var.schema}

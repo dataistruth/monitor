@@ -6,6 +6,9 @@ resources:
       warehouse_id: ${var.warehouse_id}
       dataset_catalog: ${var.catalog}
       dataset_schema: ${var.schema}
+      permissions:
+        - level: CAN_MANAGE
+          group_name: ${var.grant_group}
 
     process_monitor:
       display_name: Process Monitor
@@ -13,3 +16,6 @@ resources:
       warehouse_id: ${var.warehouse_id}
       dataset_catalog: ${var.catalog}
       dataset_schema: ${var.schema}
+      permissions:
+        - level: CAN_MANAGE
+          group_name: ${var.grant_group}
