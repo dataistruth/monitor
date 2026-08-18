@@ -38,6 +38,7 @@ job_runs AS (
     ) AS status,
     MAX_BY(r.trigger_type, r.period_end_time) AS trigger_type,
     MAX_BY(r.run_type, r.period_end_time) AS execution_type,
+    COALESCE(MAX_BY(r.run_type, r.period_end_time), 'JOB_RUN') AS job_type,
     CAST(NULL AS STRING) AS notebook_id,
     CAST(NULL AS STRING) AS pipeline_id,
     MAX_BY(r.termination_code, r.period_end_time)
@@ -75,6 +76,10 @@ pipeline_runs AS (
     ) AS status,
     MAX_BY(p.trigger_type, p.period_end_time) AS trigger_type,
     MAX_BY(p.update_type, p.period_end_time) AS execution_type,
+    CONCAT(
+      'PIPELINE_',
+      COALESCE(MAX_BY(p.update_type, p.period_end_time), 'UPDATE')
+    ) AS job_type,
     CAST(NULL AS STRING) AS notebook_id,
     CAST(p.pipeline_id AS STRING) AS pipeline_id,
     CAST(NULL AS STRING) AS termination_code,
@@ -122,6 +127,7 @@ notebook_adhoc AS (
     END AS status,
     'INTERACTIVE' AS trigger_type,
     'ADHOC' AS execution_type,
+    'NOTEBOOK_ADHOC' AS job_type,
     CAST(a.request_params['notebookId'] AS STRING) AS notebook_id,
     CAST(NULL AS STRING) AS pipeline_id,
     CAST(NULL AS STRING) AS termination_code,

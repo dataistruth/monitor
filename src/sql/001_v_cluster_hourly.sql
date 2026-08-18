@@ -1,5 +1,6 @@
 -- Cluster hourly utilization from system.compute tables.
 -- Placeholders: {{catalog}}, {{schema}}, {{workspace_id}}
+-- Note: system.compute covers classic all-purpose/jobs clusters only (not serverless).
 
 CREATE OR REPLACE VIEW {{catalog}}.{{schema}}.v_cluster_hourly AS
 WITH latest_clusters AS (
@@ -16,8 +17,28 @@ SELECT
   n.cluster_id,
   c.cluster_name,
   c.cluster_source,
+  CASE c.cluster_source
+    WHEN 'UI' THEN 'ALL_PURPOSE'
+    WHEN 'API' THEN 'ALL_PURPOSE'
+    WHEN 'JOB' THEN 'JOBS'
+    WHEN 'PIPELINE' THEN 'PIPELINE'
+    WHEN 'PIPELINE_MAINTENANCE' THEN 'PIPELINE'
+    ELSE COALESCE(c.cluster_source, 'OTHER')
+  END AS compute_purpose,
+  c.data_security_mode,
+  CASE c.data_security_mode
+    WHEN 'SINGLE_USER' THEN 'SINGLE_USER'
+    WHEN 'LEGACY_SINGLE_USER' THEN 'SINGLE_USER'
+    WHEN 'USER_ISOLATION' THEN 'STANDARD'
+    WHEN 'NONE' THEN 'NO_ISOLATION_SHARED'
+    WHEN 'LEGACY_PASSTHROUGH' THEN 'STANDARD_LEGACY'
+    WHEN 'LEGACY_TABLE_ACL' THEN 'CUSTOM'
+    ELSE COALESCE(c.data_security_mode, 'UNKNOWN')
+  END AS access_mode,
   c.owned_by,
   c.dbr_version,
+  c.driver_node_type,
+  c.worker_node_type,
   DATE_TRUNC('hour', n.start_time) AS hour_utc,
 
   COUNT(DISTINCT DATE_TRUNC('minute', n.start_time)) AS active_minutes,
@@ -42,6 +63,9 @@ GROUP BY
   n.cluster_id,
   c.cluster_name,
   c.cluster_source,
+  c.data_security_mode,
   c.owned_by,
   c.dbr_version,
+  c.driver_node_type,
+  c.worker_node_type,
   DATE_TRUNC('hour', n.start_time);
