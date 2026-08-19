@@ -56,6 +56,8 @@ replacements = {
 cluster_sql_path = sql_dir / "001_v_cluster_hourly.sql"
 process_sql_path = sql_dir / "002_unified_runs.sql"
 compute_usage_sql_path = sql_dir / "003_compute_usage_by_type.sql"
+api_runs_sql_path = sql_dir / "004_api_submitted_runs.sql"
+api_params_sql_path = sql_dir / "005_api_submitted_run_params.sql"
 
 print(f"SQL dir: {sql_dir}")
 print(f"Target: {catalog}.{schema}")
@@ -77,6 +79,12 @@ while True:
 
     spark.sql(load_sql(compute_usage_sql_path, replacements))
     print(f"Refreshed {catalog}.{schema}.compute_usage_by_type")
+
+    spark.sql(load_sql(api_runs_sql_path, replacements))
+    print(f"Refreshed {catalog}.{schema}.api_submitted_runs")
+
+    spark.sql(load_sql(api_params_sql_path, replacements))
+    print(f"Refreshed {catalog}.{schema}.api_submitted_run_params")
 
     if max_iterations > 0 and iteration >= max_iterations:
         print(f"Reached max_iterations={max_iterations}; exiting.")

@@ -19,3 +19,13 @@ resources:
       permissions:
         - level: CAN_MANAGE
           group_name: ${var.grant_group}
+
+    api_submit_monitor:
+      display_name: API Submit Monitor (${var.catalog}.${var.schema})
+      file_path: ../src/dashboards/api_submit_monitor.lvdash.json
+      warehouse_id: ${var.warehouse_id}
+      dataset_catalog: ${var.catalog}
+      dataset_schema: ${var.schema}
+      permissions:
+        - level: CAN_MANAGE
+          group_name: ${var.grant_group}
