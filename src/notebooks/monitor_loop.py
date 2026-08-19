@@ -76,6 +76,12 @@ while True:
     started = datetime.now(timezone.utc).isoformat()
     print(f"\n=== iteration {iteration} @ {started} ===")
 
+    import importlib
+    import monitor as monitor_pkg
+
+    importlib.reload(monitor_pkg)
+    load_sql = monitor_pkg.load_sql
+
     spark.sql(load_sql(cluster_sql_path, replacements))
     print(f"Refreshed {catalog}.{schema}.v_cluster_hourly")
 
