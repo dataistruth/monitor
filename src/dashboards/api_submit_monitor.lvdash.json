@@ -478,7 +478,108 @@
                   },
                   {
                     "fieldName": "status",
-                    "displayName": "Status"
+                    "displayName": "Status",
+                    "style": {
+                      "type": "basic",
+                      "rules": [
+                        {
+                          "condition": {
+                            "operand": {
+                              "type": "data-value",
+                              "value": "RUNNING"
+                            },
+                            "operator": "="
+                          },
+                          "backgroundColor": {
+                            "hex": "#B7E4C7"
+                          }
+                        },
+                        {
+                          "condition": {
+                            "operand": {
+                              "type": "data-value",
+                              "value": "SUCCEEDED"
+                            },
+                            "operator": "="
+                          },
+                          "backgroundColor": {
+                            "hex": "#BDD7F0"
+                          }
+                        },
+                        {
+                          "condition": {
+                            "operand": {
+                              "type": "data-value",
+                              "value": "SUCCESS"
+                            },
+                            "operator": "="
+                          },
+                          "backgroundColor": {
+                            "hex": "#BDD7F0"
+                          }
+                        },
+                        {
+                          "condition": {
+                            "operand": {
+                              "type": "data-value",
+                              "value": "FAILED"
+                            },
+                            "operator": "="
+                          },
+                          "backgroundColor": {
+                            "hex": "#F5B7B1"
+                          }
+                        },
+                        {
+                          "condition": {
+                            "operand": {
+                              "type": "data-value",
+                              "value": "ERROR"
+                            },
+                            "operator": "="
+                          },
+                          "backgroundColor": {
+                            "hex": "#F5B7B1"
+                          }
+                        },
+                        {
+                          "condition": {
+                            "operand": {
+                              "type": "data-value",
+                              "value": "TIMEDOUT"
+                            },
+                            "operator": "="
+                          },
+                          "backgroundColor": {
+                            "hex": "#F5B7B1"
+                          }
+                        },
+                        {
+                          "condition": {
+                            "operand": {
+                              "type": "data-value",
+                              "value": "CANCELED"
+                            },
+                            "operator": "="
+                          },
+                          "backgroundColor": {
+                            "hex": "#E0E3E7"
+                          }
+                        },
+                        {
+                          "condition": {
+                            "operand": {
+                              "type": "data-value",
+                              "value": "SKIPPED"
+                            },
+                            "operator": "="
+                          },
+                          "backgroundColor": {
+                            "hex": "#E0E3E7"
+                          }
+                        }
+                      ]
+                    }
                   },
                   {
                     "fieldName": "termination_code",
