@@ -111,7 +111,7 @@ submitters AS (
       try_element_at(from_json(a.response.result, 'map<string,string>'), 'run_id'),
       try_element_at(from_json(a.response.result, 'map<string,string>'), 'runId')
     ) AS run_id,
-    COALESCE(a.user_identity.email, a.user_identity.subjectName) AS submitted_by
+    COALESCE(a.user_identity.email, a.user_identity.subject_name) AS submitted_by
   FROM system.access.audit a
   WHERE a.workspace_id = '{{workspace_id}}'
     AND a.service_name = 'jobs'
