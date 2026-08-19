@@ -453,30 +453,6 @@
                     "displayName": "Job name"
                   },
                   {
-                    "fieldName": "run_id",
-                    "displayName": "Run ID"
-                  },
-                  {
-                    "fieldName": "job_id",
-                    "displayName": "Job ID"
-                  },
-                  {
-                    "fieldName": "submitted_by",
-                    "displayName": "Submitted by"
-                  },
-                  {
-                    "fieldName": "submit_channel",
-                    "displayName": "Channel"
-                  },
-                  {
-                    "fieldName": "run_type",
-                    "displayName": "Run type"
-                  },
-                  {
-                    "fieldName": "trigger_type",
-                    "displayName": "Trigger"
-                  },
-                  {
                     "fieldName": "status",
                     "displayName": "Status",
                     "style": {
@@ -580,6 +556,30 @@
                         }
                       ]
                     }
+                  },
+                  {
+                    "fieldName": "run_id",
+                    "displayName": "Run ID"
+                  },
+                  {
+                    "fieldName": "job_id",
+                    "displayName": "Job ID"
+                  },
+                  {
+                    "fieldName": "submitted_by",
+                    "displayName": "Submitted by"
+                  },
+                  {
+                    "fieldName": "submit_channel",
+                    "displayName": "Channel"
+                  },
+                  {
+                    "fieldName": "run_type",
+                    "displayName": "Run type"
+                  },
+                  {
+                    "fieldName": "trigger_type",
+                    "displayName": "Trigger"
                   },
                   {
                     "fieldName": "termination_code",
