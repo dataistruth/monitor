@@ -1,0 +1,33 @@
+# Per-SQL refresh cadence for the monitor loop job.
+#
+# interval_seconds:
+#   0  = run on every loop iteration
+#   N  = run on first loop (if run_on_start), then only when N seconds have elapsed
+#
+# run_on_start: always execute on the first loop iteration of a job run.
+
+sql:
+  - file: 001_v_cluster_hourly.sql
+    table: v_cluster_hourly
+    interval_seconds: 21600   # 6 hours
+    run_on_start: true
+
+  - file: 002_unified_runs.sql
+    table: unified_runs
+    interval_seconds: 21600   # 6 hours
+    run_on_start: true
+
+  - file: 003_compute_usage_by_type.sql
+    table: compute_usage_by_type
+    interval_seconds: 21600   # 6 hours
+    run_on_start: true
+
+  - file: 004_api_submitted_runs.sql
+    table: api_submitted_runs
+    interval_seconds: 0       # every loop
+    run_on_start: true
+
+  - file: 005_api_submitted_run_params.sql
+    table: api_submitted_run_params
+    interval_seconds: 0       # every loop
+    run_on_start: true

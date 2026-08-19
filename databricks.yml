@@ -23,7 +23,7 @@ variables:
     default: 300
   api_submit_last_n_runs:
     description: Number of most recent API-submitted job runs to keep and show
-    default: 100
+    default: 1000
   grant_group:
     description: Databricks group granted CAN_MANAGE on jobs and dashboards
     default: ipacs_dev_team
@@ -31,6 +31,7 @@ variables:
 sync:
   include:
     - src/**
+    - config/**
   exclude:
     - src/**/__pycache__
     - src/**/*.pyc

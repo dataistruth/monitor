@@ -1,4 +1,4 @@
--- Exploded parameters for the last 100 API-submitted runs.
+-- Exploded parameters for the last N API-submitted runs.
 -- Placeholders: {{catalog}}, {{schema}}, {{workspace_id}}
 
 CREATE OR REPLACE TABLE {{catalog}}.{{schema}}.api_submitted_run_params AS

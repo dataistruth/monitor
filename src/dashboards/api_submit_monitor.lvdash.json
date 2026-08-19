@@ -3,7 +3,7 @@
     {
       "name": "api_runs",
       "displayName": "API submitted runs",
-      "query": "SELECT\n  recency_rank,\n  job_nm,\n  run_id,\n  job_id,\n  run_name,\n  submitted_by,\n  submit_channel,\n  run_type,\n  trigger_type,\n  status,\n  termination_code,\n  start_time,\n  end_time,\n  duration_seconds,\n  ROUND(dbu_consumed, 3) AS dbu_consumed,\n  ROUND(cluster_dbu_during_run, 3) AS cluster_dbu_during_run,\n  COALESCE(compute_billing_type, 'CLASSIC') AS compute_billing_type,\n  cluster_running_on,\n  cluster_names,\n  cluster_ids,\n  cluster_sources,\n  cluster_access_modes,\n  parameter_keys,\n  job_parameters_json\nFROM api_submitted_runs\nORDER BY recency_rank"
+      "query": "SELECT\n  recency_rank,\n  job_nm,\n  run_id,\n  job_id,\n  submitted_by,\n  submit_channel,\n  run_type,\n  trigger_type,\n  status,\n  termination_code,\n  start_time,\n  end_time,\n  duration_seconds,\n  ROUND(dbu_consumed, 3) AS dbu_consumed,\n  ROUND(cluster_dbu_during_run, 3) AS cluster_dbu_during_run,\n  COALESCE(compute_billing_type, 'CLASSIC') AS compute_billing_type,\n  cluster_running_on,\n  cluster_names,\n  cluster_ids,\n  cluster_sources,\n  cluster_access_modes,\n  parameter_keys,\n  job_parameters_json\nFROM api_submitted_runs\nORDER BY recency_rank"
     },
     {
       "name": "api_run_summary",
@@ -25,7 +25,7 @@
           },
           "widget": {
             "name": "title",
-            "textbox_spec": "# API Submit Monitor\nLast N API-submitted job runs (bundle var `api_submit_last_n_runs`). Use the **Search job name** filter above, or the search icon on the Job name / Run name columns."
+            "textbox_spec": "# API Submit Monitor\nLast N API-submitted job runs (bundle var `api_submit_last_n_runs`, default 1000). Use **Search job name** to filter."
           }
         },
         {
@@ -351,10 +351,6 @@
                       "name": "job_id"
                     },
                     {
-                      "expression": "`run_name`",
-                      "name": "run_name"
-                    },
-                    {
                       "expression": "`submitted_by`",
                       "name": "submitted_by"
                     },
@@ -455,10 +451,6 @@
                   {
                     "fieldName": "job_id",
                     "displayName": "Job ID"
-                  },
-                  {
-                    "fieldName": "run_name",
-                    "displayName": "Run name"
                   },
                   {
                     "fieldName": "submitted_by",

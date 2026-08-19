@@ -2,8 +2,10 @@
 # MAGIC %md
 # MAGIC # Monitor refresh loop
 # MAGIC
-# MAGIC Refreshes cluster + process monitoring objects, then sleeps
-# MAGIC `monitor_frequency_seconds` and repeats until cancelled (or max_iterations).
+# MAGIC Loop sleep is `monitor_frequency_seconds`. Each SQL file has its own cadence
+# MAGIC in `config/refresh.yml` (`interval_seconds`: 0 = every loop).
+# MAGIC Cluster / process / DBU SQLs default to first loop, then every 6 hours.
+# MAGIC Job API SQLs default to every loop.
 
 # COMMAND ----------
 
@@ -11,11 +13,12 @@ dbutils.widgets.text("catalog", "main", "Catalog")
 dbutils.widgets.text("schema", "monitoring", "Schema")
 dbutils.widgets.text("workspace_id", "", "Workspace ID")
 dbutils.widgets.text("monitor_frequency_seconds", "300", "Loop frequency (seconds)")
-dbutils.widgets.text("api_submit_last_n_runs", "100", "Last N API-submitted runs")
+dbutils.widgets.text("api_submit_last_n_runs", "1000", "Last N API-submitted runs")
 dbutils.widgets.text("max_iterations", "0", "Max iterations (0 = forever)")
 
 # COMMAND ----------
 
+import importlib
 import sys
 import time
 from datetime import datetime, timezone
@@ -33,7 +36,13 @@ src_root = f"{repo_root}/src"
 if src_root not in sys.path:
     sys.path.insert(0, src_root)
 
-from monitor import load_sql, resolve_sql_dir
+from monitor import (
+    load_sql,
+    load_sql_schedule,
+    resolve_config_dir,
+    resolve_sql_dir,
+    sql_is_due,
+)
 
 catalog = dbutils.widgets.get("catalog").strip()
 schema = dbutils.widgets.get("schema").strip()
@@ -50,6 +59,10 @@ if last_n_runs < 1:
     raise ValueError("api_submit_last_n_runs must be >= 1.")
 
 sql_dir = resolve_sql_dir(f"/Workspace{nb_path}")
+config_dir = resolve_config_dir(f"/Workspace{nb_path}")
+schedule_path = config_dir / "refresh.yml"
+schedule = load_sql_schedule(schedule_path)
+last_ran: dict[str, datetime] = {}
 
 replacements = {
     "catalog": catalog,
@@ -58,44 +71,45 @@ replacements = {
     "last_n_runs": str(last_n_runs),
 }
 
-cluster_sql_path = sql_dir / "001_v_cluster_hourly.sql"
-process_sql_path = sql_dir / "002_unified_runs.sql"
-compute_usage_sql_path = sql_dir / "003_compute_usage_by_type.sql"
-api_runs_sql_path = sql_dir / "004_api_submitted_runs.sql"
-api_params_sql_path = sql_dir / "005_api_submitted_run_params.sql"
-
 print(f"SQL dir: {sql_dir}")
+print(f"Schedule: {schedule_path}")
 print(f"Target: {catalog}.{schema}")
-print(f"Frequency: {frequency_seconds}s | last_n_runs: {last_n_runs} | max_iterations: {max_iterations or 'forever'}")
+print(
+    f"Loop: {frequency_seconds}s | last_n_runs: {last_n_runs} | "
+    f"max_iterations: {max_iterations or 'forever'}"
+)
+for item in schedule:
+    cadence = "every loop" if item["interval_seconds"] <= 0 else f"{item['interval_seconds']}s"
+    print(f"  {item['file']}: {cadence} (run_on_start={item['run_on_start']})")
 
 # COMMAND ----------
 
 iteration = 0
 while True:
     iteration += 1
-    started = datetime.now(timezone.utc).isoformat()
-    print(f"\n=== iteration {iteration} @ {started} ===")
+    now = datetime.now(timezone.utc)
+    print(f"\n=== iteration {iteration} @ {now.isoformat()} ===")
 
-    import importlib
     import monitor as monitor_pkg
 
     importlib.reload(monitor_pkg)
     load_sql = monitor_pkg.load_sql
+    load_sql_schedule = monitor_pkg.load_sql_schedule
+    sql_is_due = monitor_pkg.sql_is_due
+    schedule = load_sql_schedule(schedule_path)
 
-    spark.sql(load_sql(cluster_sql_path, replacements))
-    print(f"Refreshed {catalog}.{schema}.v_cluster_hourly")
+    for item in schedule:
+        sql_file = item["file"]
+        interval = int(item["interval_seconds"])
+        if not sql_is_due(last_ran.get(sql_file), interval, item["run_on_start"], now):
+            next_in = interval - (now - last_ran[sql_file]).total_seconds()
+            print(f"Skip {sql_file} (next in {int(next_in)}s)")
+            continue
 
-    spark.sql(load_sql(process_sql_path, replacements))
-    print(f"Refreshed {catalog}.{schema}.unified_runs")
-
-    spark.sql(load_sql(compute_usage_sql_path, replacements))
-    print(f"Refreshed {catalog}.{schema}.compute_usage_by_type")
-
-    spark.sql(load_sql(api_runs_sql_path, replacements))
-    print(f"Refreshed {catalog}.{schema}.api_submitted_runs")
-
-    spark.sql(load_sql(api_params_sql_path, replacements))
-    print(f"Refreshed {catalog}.{schema}.api_submitted_run_params")
+        sql_path = sql_dir / sql_file
+        spark.sql(load_sql(sql_path, replacements))
+        last_ran[sql_file] = now
+        print(f"Refreshed {catalog}.{schema}.{item['table']}")
 
     if max_iterations > 0 and iteration >= max_iterations:
         print(f"Reached max_iterations={max_iterations}; exiting.")
