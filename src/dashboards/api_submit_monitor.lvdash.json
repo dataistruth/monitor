@@ -8,7 +8,7 @@
     {
       "name": "api_run_summary",
       "displayName": "API run summary",
-      "query": "SELECT\n  COUNT(*) AS total_runs,\n  SUM(CASE WHEN status IN ('SUCCEEDED', 'SUCCESS') THEN 1 ELSE 0 END) AS succeeded_runs,\n  SUM(CASE WHEN status IN ('FAILED', 'ERROR', 'TIMEDOUT') THEN 1 ELSE 0 END) AS failed_runs,\n  ROUND(SUM(cluster_dbu_during_run), 1) AS total_dbus,\n  ROUND(AVG(duration_seconds), 0) AS avg_run_seconds\nFROM api_submitted_runs"
+      "query": "SELECT\n  COUNT(*) AS total_runs,\n  SUM(CASE WHEN status IN ('SUCCEEDED', 'SUCCESS') THEN 1 ELSE 0 END) AS succeeded_runs,\n  SUM(CASE WHEN status IN ('FAILED', 'ERROR', 'TIMEDOUT') THEN 1 ELSE 0 END) AS failed_runs,\n  ROUND(SUM(cluster_dbu_during_run), 1) AS total_dbus,\n  ROUND(AVG(duration_seconds), 0) AS avg_run_seconds\nFROM api_submitted_runs\nWHERE start_time >= CURRENT_TIMESTAMP() - INTERVAL 24 HOURS"
     }
   ],
   "pages": [
@@ -25,7 +25,7 @@
           },
           "widget": {
             "name": "title",
-            "textbox_spec": "# API Submit Monitor\nLast N API-submitted job runs (bundle var `api_submit_last_n_runs`, default 1000). Use **Search job name** to filter."
+            "textbox_spec": "# API Submit Monitor\nSummary KPIs are **last 24 hours**. Table is last N runs (`api_submit_last_n_runs`, default 1000) with recency rank. Use **Search job name** to filter the table."
           }
         },
         {
@@ -151,7 +151,7 @@
               "widgetType": "counter",
               "frame": {
                 "showTitle": true,
-                "title": "Runs"
+                "title": "Runs (24h)"
               },
               "encodings": {
                 "value": {
@@ -191,7 +191,7 @@
               "widgetType": "counter",
               "frame": {
                 "showTitle": true,
-                "title": "Succeeded"
+                "title": "Succeeded (24h)"
               },
               "encodings": {
                 "value": {
@@ -231,7 +231,7 @@
               "widgetType": "counter",
               "frame": {
                 "showTitle": true,
-                "title": "Failed"
+                "title": "Failed (24h)"
               },
               "encodings": {
                 "value": {
@@ -271,7 +271,7 @@
               "widgetType": "counter",
               "frame": {
                 "showTitle": true,
-                "title": "Cluster DBUs in run windows"
+                "title": "Cluster DBUs (24h)"
               },
               "encodings": {
                 "value": {
@@ -311,7 +311,7 @@
               "widgetType": "counter",
               "frame": {
                 "showTitle": true,
-                "title": "Avg run time (sec)"
+                "title": "Avg run time sec (24h)"
               },
               "encodings": {
                 "value": {
@@ -338,6 +338,10 @@
                   "datasetName": "api_runs",
                   "disaggregated": true,
                   "fields": [
+                    {
+                      "expression": "`recency_rank`",
+                      "name": "recency_rank"
+                    },
                     {
                       "expression": "`job_nm`",
                       "name": "job_nm"
@@ -440,6 +444,10 @@
               },
               "encodings": {
                 "columns": [
+                  {
+                    "fieldName": "recency_rank",
+                    "displayName": "Recency rank"
+                  },
                   {
                     "fieldName": "job_nm",
                     "displayName": "Job name"
