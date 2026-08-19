@@ -1,6 +1,6 @@
--- API-submitted job runs (Submit Run / Run Now) — last 100.
--- Includes parameters, status, DBU consumption, and clusters used.
--- Placeholders: {{catalog}}, {{schema}}, {{workspace_id}}
+-- API-submitted job runs (Submit Run / Run Now) — last {{last_n_runs}}.
+-- Includes job_nm, parameters, status, DBU consumption, and clusters used.
+-- Placeholders: {{catalog}}, {{schema}}, {{workspace_id}}, {{last_n_runs}}
 --
 -- SUBMIT_RUN = POST /api/2.x/jobs/runs/submit (e.g. Airflow DatabricksSubmitRunOperator)
 -- ONETIME    = one-time manual or API trigger (e.g. Airflow DatabricksRunNowOperator)
@@ -48,10 +48,10 @@ ranked AS (
   FROM run_periods
 ),
 
-latest_100 AS (
+latest_n AS (
   SELECT *
   FROM ranked
-  WHERE rn <= 100
+  WHERE rn <= {{last_n_runs}}
 ),
 
 latest_clusters AS (
@@ -88,7 +88,7 @@ run_clusters AS (
       t.job_run_id,
       cid
     FROM system.lakeflow.job_task_run_timeline t
-    INNER JOIN latest_100 l
+    INNER JOIN latest_n l
       ON t.workspace_id = l.workspace_id
      AND CAST(t.job_run_id AS STRING) = CAST(l.run_id AS STRING)
     LATERAL VIEW OUTER explode(COALESCE(t.compute_ids, array())) lv AS cid
@@ -171,7 +171,7 @@ run_dbus AS (
       ELSE 'OTHER'
     END AS compute_billing_type
   FROM system.billing.usage u
-  INNER JOIN latest_100 l
+  INNER JOIN latest_n l
     ON u.workspace_id = l.workspace_id
    AND CAST(u.usage_metadata.job_run_id AS STRING) = CAST(l.run_id AS STRING)
   WHERE u.workspace_id = '{{workspace_id}}'
@@ -186,6 +186,13 @@ SELECT
   l.workspace_id,
   l.job_id,
   CAST(l.run_id AS STRING) AS run_id,
+  concat(
+    CAST(l.job_id AS STRING),
+    '-',
+    CAST(l.run_id AS STRING),
+    ' | ',
+    substr(COALESCE(l.run_name, ''), 1, 50)
+  ) AS job_nm,
   COALESCE(
     s.submitted_by,
     d.billed_run_as,
@@ -222,7 +229,7 @@ SELECT
     ELSE 'UNKNOWN'
   END AS cluster_running_on,
   l.rn AS recency_rank
-FROM latest_100 l
+FROM latest_n l
 LEFT JOIN run_dbus d
   ON l.workspace_id = d.workspace_id
  AND CAST(l.run_id AS STRING) = d.run_id

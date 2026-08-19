@@ -21,6 +21,9 @@ variables:
   monitor_frequency_seconds:
     description: Seconds between refresh iterations in the monitor loop job
     default: 300
+  api_submit_last_n_runs:
+    description: Number of most recent API-submitted job runs to keep and show
+    default: 100
   grant_group:
     description: Databricks group granted CAN_MANAGE on jobs and dashboards
     default: ipacs_dev_team

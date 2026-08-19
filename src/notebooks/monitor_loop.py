@@ -11,6 +11,7 @@ dbutils.widgets.text("catalog", "main", "Catalog")
 dbutils.widgets.text("schema", "monitoring", "Schema")
 dbutils.widgets.text("workspace_id", "", "Workspace ID")
 dbutils.widgets.text("monitor_frequency_seconds", "300", "Loop frequency (seconds)")
+dbutils.widgets.text("api_submit_last_n_runs", "100", "Last N API-submitted runs")
 dbutils.widgets.text("max_iterations", "0", "Max iterations (0 = forever)")
 
 # COMMAND ----------
@@ -38,12 +39,15 @@ catalog = dbutils.widgets.get("catalog").strip()
 schema = dbutils.widgets.get("schema").strip()
 workspace_id = dbutils.widgets.get("workspace_id").strip()
 frequency_seconds = int(dbutils.widgets.get("monitor_frequency_seconds"))
+last_n_runs = int(dbutils.widgets.get("api_submit_last_n_runs"))
 max_iterations = int(dbutils.widgets.get("max_iterations"))
 
 if not workspace_id:
     raise ValueError("workspace_id is required for cluster monitoring SQL.")
 if frequency_seconds < 60:
     raise ValueError("monitor_frequency_seconds must be >= 60.")
+if last_n_runs < 1:
+    raise ValueError("api_submit_last_n_runs must be >= 1.")
 
 sql_dir = resolve_sql_dir(f"/Workspace{nb_path}")
 
@@ -51,6 +55,7 @@ replacements = {
     "catalog": catalog,
     "schema": schema,
     "workspace_id": workspace_id,
+    "last_n_runs": str(last_n_runs),
 }
 
 cluster_sql_path = sql_dir / "001_v_cluster_hourly.sql"
@@ -61,7 +66,7 @@ api_params_sql_path = sql_dir / "005_api_submitted_run_params.sql"
 
 print(f"SQL dir: {sql_dir}")
 print(f"Target: {catalog}.{schema}")
-print(f"Frequency: {frequency_seconds}s | max_iterations: {max_iterations or 'forever'}")
+print(f"Frequency: {frequency_seconds}s | last_n_runs: {last_n_runs} | max_iterations: {max_iterations or 'forever'}")
 
 # COMMAND ----------
 

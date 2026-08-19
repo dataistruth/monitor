@@ -21,6 +21,7 @@ resources:
               schema: ${var.schema}
               workspace_id: ${var.workspace_id}
               monitor_frequency_seconds: "${var.monitor_frequency_seconds}"
+              api_submit_last_n_runs: "${var.api_submit_last_n_runs}"
               max_iterations: "0"
           environment_key: default
       environments:
