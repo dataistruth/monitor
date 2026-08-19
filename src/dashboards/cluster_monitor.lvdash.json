@@ -37,14 +37,24 @@
       "displayName": "Cluster Monitor",
       "layout": [
         {
-          "position": { "x": 0, "y": 0, "width": 6, "height": 1 },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 1
+          },
           "widget": {
             "name": "title",
             "textbox_spec": "# Cluster Monitor\nClassic clusters by **Single User / Standard** access mode (`system.compute`) plus **Serverless vs classic DBUs** (`system.billing.usage`)."
           }
         },
         {
-          "position": { "x": 0, "y": 1, "width": 1, "height": 2 },
+          "position": {
+            "x": 0,
+            "y": 1,
+            "width": 1,
+            "height": 2
+          },
           "widget": {
             "name": "kpi_clusters",
             "queries": [
@@ -53,22 +63,38 @@
                 "query": {
                   "datasetName": "cluster_summary",
                   "disaggregated": false,
-                  "fields": [{ "expression": "`clusters`", "name": "clusters" }]
+                  "fields": [
+                    {
+                      "expression": "`clusters`",
+                      "name": "clusters"
+                    }
+                  ]
                 }
               }
             ],
             "spec": {
               "version": 2,
               "widgetType": "counter",
-              "frame": { "showTitle": true, "title": "Clusters (24h)" },
+              "frame": {
+                "showTitle": true,
+                "title": "Clusters (24h)"
+              },
               "encodings": {
-                "value": { "fieldName": "clusters", "displayName": "Clusters" }
+                "value": {
+                  "fieldName": "clusters",
+                  "displayName": "Clusters"
+                }
               }
             }
           }
         },
         {
-          "position": { "x": 1, "y": 1, "width": 1, "height": 2 },
+          "position": {
+            "x": 1,
+            "y": 1,
+            "width": 1,
+            "height": 2
+          },
           "widget": {
             "name": "kpi_node_hours",
             "queries": [
@@ -77,22 +103,38 @@
                 "query": {
                   "datasetName": "cluster_summary",
                   "disaggregated": false,
-                  "fields": [{ "expression": "`total_node_hours`", "name": "total_node_hours" }]
+                  "fields": [
+                    {
+                      "expression": "`total_node_hours`",
+                      "name": "total_node_hours"
+                    }
+                  ]
                 }
               }
             ],
             "spec": {
               "version": 2,
               "widgetType": "counter",
-              "frame": { "showTitle": true, "title": "Node hours (24h)" },
+              "frame": {
+                "showTitle": true,
+                "title": "Node hours (24h)"
+              },
               "encodings": {
-                "value": { "fieldName": "total_node_hours", "displayName": "Node hours" }
+                "value": {
+                  "fieldName": "total_node_hours",
+                  "displayName": "Node hours"
+                }
               }
             }
           }
         },
         {
-          "position": { "x": 2, "y": 1, "width": 1, "height": 2 },
+          "position": {
+            "x": 2,
+            "y": 1,
+            "width": 1,
+            "height": 2
+          },
           "widget": {
             "name": "kpi_cpu",
             "queries": [
@@ -101,22 +143,38 @@
                 "query": {
                   "datasetName": "cluster_summary",
                   "disaggregated": false,
-                  "fields": [{ "expression": "`avg_cpu_pct`", "name": "avg_cpu_pct" }]
+                  "fields": [
+                    {
+                      "expression": "`avg_cpu_pct`",
+                      "name": "avg_cpu_pct"
+                    }
+                  ]
                 }
               }
             ],
             "spec": {
               "version": 2,
               "widgetType": "counter",
-              "frame": { "showTitle": true, "title": "Avg CPU % (24h)" },
+              "frame": {
+                "showTitle": true,
+                "title": "Avg CPU % (24h)"
+              },
               "encodings": {
-                "value": { "fieldName": "avg_cpu_pct", "displayName": "Avg CPU %" }
+                "value": {
+                  "fieldName": "avg_cpu_pct",
+                  "displayName": "Avg CPU %"
+                }
               }
             }
           }
         },
         {
-          "position": { "x": 3, "y": 1, "width": 1, "height": 2 },
+          "position": {
+            "x": 3,
+            "y": 1,
+            "width": 1,
+            "height": 2
+          },
           "widget": {
             "name": "kpi_mem",
             "queries": [
@@ -125,22 +183,38 @@
                 "query": {
                   "datasetName": "cluster_summary",
                   "disaggregated": false,
-                  "fields": [{ "expression": "`avg_memory_pct`", "name": "avg_memory_pct" }]
+                  "fields": [
+                    {
+                      "expression": "`avg_memory_pct`",
+                      "name": "avg_memory_pct"
+                    }
+                  ]
                 }
               }
             ],
             "spec": {
               "version": 2,
               "widgetType": "counter",
-              "frame": { "showTitle": true, "title": "Avg memory % (24h)" },
+              "frame": {
+                "showTitle": true,
+                "title": "Avg memory % (24h)"
+              },
               "encodings": {
-                "value": { "fieldName": "avg_memory_pct", "displayName": "Avg memory %" }
+                "value": {
+                  "fieldName": "avg_memory_pct",
+                  "displayName": "Avg memory %"
+                }
               }
             }
           }
         },
         {
-          "position": { "x": 0, "y": 3, "width": 3, "height": 4 },
+          "position": {
+            "x": 0,
+            "y": 3,
+            "width": 3,
+            "height": 4
+          },
           "widget": {
             "name": "access_mode_table",
             "queries": [
@@ -150,34 +224,72 @@
                   "datasetName": "by_access_mode",
                   "disaggregated": true,
                   "fields": [
-                    { "expression": "`access_mode`", "name": "access_mode" },
-                    { "expression": "`clusters`", "name": "clusters" },
-                    { "expression": "`node_hours`", "name": "node_hours" },
-                    { "expression": "`avg_cpu_pct`", "name": "avg_cpu_pct" },
-                    { "expression": "`avg_memory_pct`", "name": "avg_memory_pct" }
+                    {
+                      "expression": "`access_mode`",
+                      "name": "access_mode"
+                    },
+                    {
+                      "expression": "`clusters`",
+                      "name": "clusters"
+                    },
+                    {
+                      "expression": "`node_hours`",
+                      "name": "node_hours"
+                    },
+                    {
+                      "expression": "`avg_cpu_pct`",
+                      "name": "avg_cpu_pct"
+                    },
+                    {
+                      "expression": "`avg_memory_pct`",
+                      "name": "avg_memory_pct"
+                    }
                   ]
                 }
               }
             ],
             "spec": {
-              "version": 1,
+              "version": 2,
               "widgetType": "table",
-              "frame": { "showTitle": true, "title": "Classic clusters by access mode (7d)" },
+              "frame": {
+                "showTitle": true,
+                "title": "Classic clusters by access mode (7d)"
+              },
               "itemsPerPage": 10,
               "encodings": {
                 "columns": [
-                  { "fieldName": "access_mode", "displayName": "Access mode", "type": "string", "visible": true },
-                  { "fieldName": "clusters", "displayName": "Clusters", "type": "integer", "visible": true },
-                  { "fieldName": "node_hours", "displayName": "Node hours", "type": "float", "visible": true },
-                  { "fieldName": "avg_cpu_pct", "displayName": "Avg CPU %", "type": "float", "visible": true },
-                  { "fieldName": "avg_memory_pct", "displayName": "Avg mem %", "type": "float", "visible": true }
+                  {
+                    "fieldName": "access_mode",
+                    "displayName": "Access mode"
+                  },
+                  {
+                    "fieldName": "clusters",
+                    "displayName": "Clusters"
+                  },
+                  {
+                    "fieldName": "node_hours",
+                    "displayName": "Node hours"
+                  },
+                  {
+                    "fieldName": "avg_cpu_pct",
+                    "displayName": "Avg CPU %"
+                  },
+                  {
+                    "fieldName": "avg_memory_pct",
+                    "displayName": "Avg mem %"
+                  }
                 ]
               }
             }
           }
         },
         {
-          "position": { "x": 3, "y": 3, "width": 3, "height": 4 },
+          "position": {
+            "x": 3,
+            "y": 3,
+            "width": 3,
+            "height": 4
+          },
           "widget": {
             "name": "compute_type_table",
             "queries": [
@@ -187,30 +299,56 @@
                   "datasetName": "compute_type_summary",
                   "disaggregated": true,
                   "fields": [
-                    { "expression": "`compute_type`", "name": "compute_type" },
-                    { "expression": "`dbus`", "name": "dbus" },
-                    { "expression": "`days_active`", "name": "days_active" }
+                    {
+                      "expression": "`compute_type`",
+                      "name": "compute_type"
+                    },
+                    {
+                      "expression": "`dbus`",
+                      "name": "dbus"
+                    },
+                    {
+                      "expression": "`days_active`",
+                      "name": "days_active"
+                    }
                   ]
                 }
               }
             ],
             "spec": {
-              "version": 1,
+              "version": 2,
               "widgetType": "table",
-              "frame": { "showTitle": true, "title": "DBUs by compute type (7d) — includes Serverless" },
+              "frame": {
+                "showTitle": true,
+                "title": "DBUs by compute type (7d) \u2014 includes Serverless"
+              },
               "itemsPerPage": 10,
               "encodings": {
                 "columns": [
-                  { "fieldName": "compute_type", "displayName": "Compute type", "type": "string", "visible": true },
-                  { "fieldName": "dbus", "displayName": "DBUs", "type": "float", "visible": true },
-                  { "fieldName": "days_active", "displayName": "Days", "type": "integer", "visible": true }
+                  {
+                    "fieldName": "compute_type",
+                    "displayName": "Compute type"
+                  },
+                  {
+                    "fieldName": "dbus",
+                    "displayName": "DBUs"
+                  },
+                  {
+                    "fieldName": "days_active",
+                    "displayName": "Days"
+                  }
                 ]
               }
             }
           }
         },
         {
-          "position": { "x": 0, "y": 7, "width": 3, "height": 4 },
+          "position": {
+            "x": 0,
+            "y": 7,
+            "width": 3,
+            "height": 4
+          },
           "widget": {
             "name": "purpose_table",
             "queries": [
@@ -220,32 +358,64 @@
                   "datasetName": "by_compute_purpose",
                   "disaggregated": true,
                   "fields": [
-                    { "expression": "`compute_purpose`", "name": "compute_purpose" },
-                    { "expression": "`access_mode`", "name": "access_mode" },
-                    { "expression": "`clusters`", "name": "clusters" },
-                    { "expression": "`node_hours`", "name": "node_hours" }
+                    {
+                      "expression": "`compute_purpose`",
+                      "name": "compute_purpose"
+                    },
+                    {
+                      "expression": "`access_mode`",
+                      "name": "access_mode"
+                    },
+                    {
+                      "expression": "`clusters`",
+                      "name": "clusters"
+                    },
+                    {
+                      "expression": "`node_hours`",
+                      "name": "node_hours"
+                    }
                   ]
                 }
               }
             ],
             "spec": {
-              "version": 1,
+              "version": 2,
               "widgetType": "table",
-              "frame": { "showTitle": true, "title": "Purpose × access mode (7d)" },
+              "frame": {
+                "showTitle": true,
+                "title": "Purpose \u00d7 access mode (7d)"
+              },
               "itemsPerPage": 20,
               "encodings": {
                 "columns": [
-                  { "fieldName": "compute_purpose", "displayName": "Purpose", "type": "string", "visible": true },
-                  { "fieldName": "access_mode", "displayName": "Access mode", "type": "string", "visible": true },
-                  { "fieldName": "clusters", "displayName": "Clusters", "type": "integer", "visible": true },
-                  { "fieldName": "node_hours", "displayName": "Node hours", "type": "float", "visible": true }
+                  {
+                    "fieldName": "compute_purpose",
+                    "displayName": "Purpose"
+                  },
+                  {
+                    "fieldName": "access_mode",
+                    "displayName": "Access mode"
+                  },
+                  {
+                    "fieldName": "clusters",
+                    "displayName": "Clusters"
+                  },
+                  {
+                    "fieldName": "node_hours",
+                    "displayName": "Node hours"
+                  }
                 ]
               }
             }
           }
         },
         {
-          "position": { "x": 3, "y": 7, "width": 3, "height": 4 },
+          "position": {
+            "x": 3,
+            "y": 7,
+            "width": 3,
+            "height": 4
+          },
           "widget": {
             "name": "daily_type_table",
             "queries": [
@@ -255,30 +425,56 @@
                   "datasetName": "compute_type_daily",
                   "disaggregated": true,
                   "fields": [
-                    { "expression": "`usage_date`", "name": "usage_date" },
-                    { "expression": "`compute_type`", "name": "compute_type" },
-                    { "expression": "`dbus`", "name": "dbus" }
+                    {
+                      "expression": "`usage_date`",
+                      "name": "usage_date"
+                    },
+                    {
+                      "expression": "`compute_type`",
+                      "name": "compute_type"
+                    },
+                    {
+                      "expression": "`dbus`",
+                      "name": "dbus"
+                    }
                   ]
                 }
               }
             ],
             "spec": {
-              "version": 1,
+              "version": 2,
               "widgetType": "table",
-              "frame": { "showTitle": true, "title": "Daily DBUs by compute type (30d)" },
+              "frame": {
+                "showTitle": true,
+                "title": "Daily DBUs by compute type (30d)"
+              },
               "itemsPerPage": 25,
               "encodings": {
                 "columns": [
-                  { "fieldName": "usage_date", "displayName": "Date", "type": "date", "visible": true },
-                  { "fieldName": "compute_type", "displayName": "Compute type", "type": "string", "visible": true },
-                  { "fieldName": "dbus", "displayName": "DBUs", "type": "float", "visible": true }
+                  {
+                    "fieldName": "usage_date",
+                    "displayName": "Date"
+                  },
+                  {
+                    "fieldName": "compute_type",
+                    "displayName": "Compute type"
+                  },
+                  {
+                    "fieldName": "dbus",
+                    "displayName": "DBUs"
+                  }
                 ]
               }
             }
           }
         },
         {
-          "position": { "x": 0, "y": 11, "width": 6, "height": 8 },
+          "position": {
+            "x": 0,
+            "y": 11,
+            "width": 6,
+            "height": 8
+          },
           "widget": {
             "name": "hourly_table",
             "queries": [
@@ -288,45 +484,132 @@
                   "datasetName": "cluster_hourly",
                   "disaggregated": true,
                   "fields": [
-                    { "expression": "`hour_utc`", "name": "hour_utc" },
-                    { "expression": "`cluster_name`", "name": "cluster_name" },
-                    { "expression": "`access_mode`", "name": "access_mode" },
-                    { "expression": "`compute_purpose`", "name": "compute_purpose" },
-                    { "expression": "`owned_by`", "name": "owned_by" },
-                    { "expression": "`driver_node_type`", "name": "driver_node_type" },
-                    { "expression": "`worker_node_type`", "name": "worker_node_type" },
-                    { "expression": "`active_minutes`", "name": "active_minutes" },
-                    { "expression": "`active_instances`", "name": "active_instances" },
-                    { "expression": "`node_hours`", "name": "node_hours" },
-                    { "expression": "`avg_cpu_pct`", "name": "avg_cpu_pct" },
-                    { "expression": "`peak_cpu_pct`", "name": "peak_cpu_pct" },
-                    { "expression": "`avg_memory_pct`", "name": "avg_memory_pct" },
-                    { "expression": "`peak_memory_pct`", "name": "peak_memory_pct" }
+                    {
+                      "expression": "`hour_utc`",
+                      "name": "hour_utc"
+                    },
+                    {
+                      "expression": "`cluster_name`",
+                      "name": "cluster_name"
+                    },
+                    {
+                      "expression": "`access_mode`",
+                      "name": "access_mode"
+                    },
+                    {
+                      "expression": "`compute_purpose`",
+                      "name": "compute_purpose"
+                    },
+                    {
+                      "expression": "`owned_by`",
+                      "name": "owned_by"
+                    },
+                    {
+                      "expression": "`driver_node_type`",
+                      "name": "driver_node_type"
+                    },
+                    {
+                      "expression": "`worker_node_type`",
+                      "name": "worker_node_type"
+                    },
+                    {
+                      "expression": "`active_minutes`",
+                      "name": "active_minutes"
+                    },
+                    {
+                      "expression": "`active_instances`",
+                      "name": "active_instances"
+                    },
+                    {
+                      "expression": "`node_hours`",
+                      "name": "node_hours"
+                    },
+                    {
+                      "expression": "`avg_cpu_pct`",
+                      "name": "avg_cpu_pct"
+                    },
+                    {
+                      "expression": "`peak_cpu_pct`",
+                      "name": "peak_cpu_pct"
+                    },
+                    {
+                      "expression": "`avg_memory_pct`",
+                      "name": "avg_memory_pct"
+                    },
+                    {
+                      "expression": "`peak_memory_pct`",
+                      "name": "peak_memory_pct"
+                    }
                   ]
                 }
               }
             ],
             "spec": {
-              "version": 1,
+              "version": 2,
               "widgetType": "table",
-              "frame": { "showTitle": true, "title": "Hourly classic cluster utilization" },
+              "frame": {
+                "showTitle": true,
+                "title": "Hourly classic cluster utilization"
+              },
               "itemsPerPage": 50,
               "encodings": {
                 "columns": [
-                  { "fieldName": "hour_utc", "displayName": "Hour (UTC)", "type": "datetime", "visible": true },
-                  { "fieldName": "cluster_name", "displayName": "Cluster", "type": "string", "visible": true },
-                  { "fieldName": "access_mode", "displayName": "Access mode", "type": "string", "visible": true },
-                  { "fieldName": "compute_purpose", "displayName": "Purpose", "type": "string", "visible": true },
-                  { "fieldName": "owned_by", "displayName": "Owner", "type": "string", "visible": true },
-                  { "fieldName": "driver_node_type", "displayName": "Driver", "type": "string", "visible": true },
-                  { "fieldName": "worker_node_type", "displayName": "Worker", "type": "string", "visible": true },
-                  { "fieldName": "active_minutes", "displayName": "Active minutes", "type": "integer", "visible": true },
-                  { "fieldName": "active_instances", "displayName": "Instances", "type": "integer", "visible": true },
-                  { "fieldName": "node_hours", "displayName": "Node hours", "type": "float", "visible": true },
-                  { "fieldName": "avg_cpu_pct", "displayName": "Avg CPU %", "type": "float", "visible": true },
-                  { "fieldName": "peak_cpu_pct", "displayName": "Peak CPU %", "type": "float", "visible": true },
-                  { "fieldName": "avg_memory_pct", "displayName": "Avg mem %", "type": "float", "visible": true },
-                  { "fieldName": "peak_memory_pct", "displayName": "Peak mem %", "type": "float", "visible": true }
+                  {
+                    "fieldName": "hour_utc",
+                    "displayName": "Hour (UTC)"
+                  },
+                  {
+                    "fieldName": "cluster_name",
+                    "displayName": "Cluster"
+                  },
+                  {
+                    "fieldName": "access_mode",
+                    "displayName": "Access mode"
+                  },
+                  {
+                    "fieldName": "compute_purpose",
+                    "displayName": "Purpose"
+                  },
+                  {
+                    "fieldName": "owned_by",
+                    "displayName": "Owner"
+                  },
+                  {
+                    "fieldName": "driver_node_type",
+                    "displayName": "Driver"
+                  },
+                  {
+                    "fieldName": "worker_node_type",
+                    "displayName": "Worker"
+                  },
+                  {
+                    "fieldName": "active_minutes",
+                    "displayName": "Active minutes"
+                  },
+                  {
+                    "fieldName": "active_instances",
+                    "displayName": "Instances"
+                  },
+                  {
+                    "fieldName": "node_hours",
+                    "displayName": "Node hours"
+                  },
+                  {
+                    "fieldName": "avg_cpu_pct",
+                    "displayName": "Avg CPU %"
+                  },
+                  {
+                    "fieldName": "peak_cpu_pct",
+                    "displayName": "Peak CPU %"
+                  },
+                  {
+                    "fieldName": "avg_memory_pct",
+                    "displayName": "Avg mem %"
+                  },
+                  {
+                    "fieldName": "peak_memory_pct",
+                    "displayName": "Peak mem %"
+                  }
                 ]
               }
             }

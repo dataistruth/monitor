@@ -37,14 +37,24 @@
       "displayName": "Process Monitor",
       "layout": [
         {
-          "position": { "x": 0, "y": 0, "width": 6, "height": 1 },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 1
+          },
           "widget": {
             "name": "title",
             "textbox_spec": "# Process Monitor\nGranular runs by **job type** (`JOB_RUN`, `WORKFLOW_RUN`, pipeline update types, notebook adhoc), trigger, and status."
           }
         },
         {
-          "position": { "x": 0, "y": 1, "width": 1, "height": 2 },
+          "position": {
+            "x": 0,
+            "y": 1,
+            "width": 1,
+            "height": 2
+          },
           "widget": {
             "name": "kpi_total",
             "queries": [
@@ -53,22 +63,38 @@
                 "query": {
                   "datasetName": "run_summary",
                   "disaggregated": false,
-                  "fields": [{ "expression": "`total_runs`", "name": "total_runs" }]
+                  "fields": [
+                    {
+                      "expression": "`total_runs`",
+                      "name": "total_runs"
+                    }
+                  ]
                 }
               }
             ],
             "spec": {
               "version": 2,
               "widgetType": "counter",
-              "frame": { "showTitle": true, "title": "Runs (24h)" },
+              "frame": {
+                "showTitle": true,
+                "title": "Runs (24h)"
+              },
               "encodings": {
-                "value": { "fieldName": "total_runs", "displayName": "Runs" }
+                "value": {
+                  "fieldName": "total_runs",
+                  "displayName": "Runs"
+                }
               }
             }
           }
         },
         {
-          "position": { "x": 1, "y": 1, "width": 1, "height": 2 },
+          "position": {
+            "x": 1,
+            "y": 1,
+            "width": 1,
+            "height": 2
+          },
           "widget": {
             "name": "kpi_failed",
             "queries": [
@@ -77,22 +103,38 @@
                 "query": {
                   "datasetName": "run_summary",
                   "disaggregated": false,
-                  "fields": [{ "expression": "`failed_runs`", "name": "failed_runs" }]
+                  "fields": [
+                    {
+                      "expression": "`failed_runs`",
+                      "name": "failed_runs"
+                    }
+                  ]
                 }
               }
             ],
             "spec": {
               "version": 2,
               "widgetType": "counter",
-              "frame": { "showTitle": true, "title": "Failed (24h)" },
+              "frame": {
+                "showTitle": true,
+                "title": "Failed (24h)"
+              },
               "encodings": {
-                "value": { "fieldName": "failed_runs", "displayName": "Failed" }
+                "value": {
+                  "fieldName": "failed_runs",
+                  "displayName": "Failed"
+                }
               }
             }
           }
         },
         {
-          "position": { "x": 2, "y": 1, "width": 1, "height": 2 },
+          "position": {
+            "x": 2,
+            "y": 1,
+            "width": 1,
+            "height": 2
+          },
           "widget": {
             "name": "kpi_ok",
             "queries": [
@@ -101,22 +143,38 @@
                 "query": {
                   "datasetName": "run_summary",
                   "disaggregated": false,
-                  "fields": [{ "expression": "`succeeded_runs`", "name": "succeeded_runs" }]
+                  "fields": [
+                    {
+                      "expression": "`succeeded_runs`",
+                      "name": "succeeded_runs"
+                    }
+                  ]
                 }
               }
             ],
             "spec": {
               "version": 2,
               "widgetType": "counter",
-              "frame": { "showTitle": true, "title": "Succeeded (24h)" },
+              "frame": {
+                "showTitle": true,
+                "title": "Succeeded (24h)"
+              },
               "encodings": {
-                "value": { "fieldName": "succeeded_runs", "displayName": "Succeeded" }
+                "value": {
+                  "fieldName": "succeeded_runs",
+                  "displayName": "Succeeded"
+                }
               }
             }
           }
         },
         {
-          "position": { "x": 3, "y": 1, "width": 1, "height": 2 },
+          "position": {
+            "x": 3,
+            "y": 1,
+            "width": 1,
+            "height": 2
+          },
           "widget": {
             "name": "kpi_running",
             "queries": [
@@ -125,22 +183,38 @@
                 "query": {
                   "datasetName": "run_summary",
                   "disaggregated": false,
-                  "fields": [{ "expression": "`running_runs`", "name": "running_runs" }]
+                  "fields": [
+                    {
+                      "expression": "`running_runs`",
+                      "name": "running_runs"
+                    }
+                  ]
                 }
               }
             ],
             "spec": {
               "version": 2,
               "widgetType": "counter",
-              "frame": { "showTitle": true, "title": "Running (24h)" },
+              "frame": {
+                "showTitle": true,
+                "title": "Running (24h)"
+              },
               "encodings": {
-                "value": { "fieldName": "running_runs", "displayName": "Running" }
+                "value": {
+                  "fieldName": "running_runs",
+                  "displayName": "Running"
+                }
               }
             }
           }
         },
         {
-          "position": { "x": 4, "y": 1, "width": 2, "height": 2 },
+          "position": {
+            "x": 4,
+            "y": 1,
+            "width": 2,
+            "height": 2
+          },
           "widget": {
             "name": "kpi_duration",
             "queries": [
@@ -149,22 +223,38 @@
                 "query": {
                   "datasetName": "run_summary",
                   "disaggregated": false,
-                  "fields": [{ "expression": "`avg_duration_seconds`", "name": "avg_duration_seconds" }]
+                  "fields": [
+                    {
+                      "expression": "`avg_duration_seconds`",
+                      "name": "avg_duration_seconds"
+                    }
+                  ]
                 }
               }
             ],
             "spec": {
               "version": 2,
               "widgetType": "counter",
-              "frame": { "showTitle": true, "title": "Avg duration sec (24h)" },
+              "frame": {
+                "showTitle": true,
+                "title": "Avg duration sec (24h)"
+              },
               "encodings": {
-                "value": { "fieldName": "avg_duration_seconds", "displayName": "Avg duration (s)" }
+                "value": {
+                  "fieldName": "avg_duration_seconds",
+                  "displayName": "Avg duration (s)"
+                }
               }
             }
           }
         },
         {
-          "position": { "x": 0, "y": 3, "width": 3, "height": 5 },
+          "position": {
+            "x": 0,
+            "y": 3,
+            "width": 3,
+            "height": 5
+          },
           "widget": {
             "name": "by_job_type",
             "queries": [
@@ -174,38 +264,88 @@
                   "datasetName": "runs_by_job_type",
                   "disaggregated": true,
                   "fields": [
-                    { "expression": "`job_type`", "name": "job_type" },
-                    { "expression": "`run_category`", "name": "run_category" },
-                    { "expression": "`runs`", "name": "runs" },
-                    { "expression": "`failed`", "name": "failed" },
-                    { "expression": "`succeeded`", "name": "succeeded" },
-                    { "expression": "`avg_duration_seconds`", "name": "avg_duration_seconds" },
-                    { "expression": "`p95_duration_seconds`", "name": "p95_duration_seconds" }
+                    {
+                      "expression": "`job_type`",
+                      "name": "job_type"
+                    },
+                    {
+                      "expression": "`run_category`",
+                      "name": "run_category"
+                    },
+                    {
+                      "expression": "`runs`",
+                      "name": "runs"
+                    },
+                    {
+                      "expression": "`failed`",
+                      "name": "failed"
+                    },
+                    {
+                      "expression": "`succeeded`",
+                      "name": "succeeded"
+                    },
+                    {
+                      "expression": "`avg_duration_seconds`",
+                      "name": "avg_duration_seconds"
+                    },
+                    {
+                      "expression": "`p95_duration_seconds`",
+                      "name": "p95_duration_seconds"
+                    }
                   ]
                 }
               }
             ],
             "spec": {
-              "version": 1,
+              "version": 2,
               "widgetType": "table",
-              "frame": { "showTitle": true, "title": "By job type (7d)" },
+              "frame": {
+                "showTitle": true,
+                "title": "By job type (7d)"
+              },
               "itemsPerPage": 25,
               "encodings": {
                 "columns": [
-                  { "fieldName": "job_type", "displayName": "Job type", "type": "string", "visible": true },
-                  { "fieldName": "run_category", "displayName": "Category", "type": "string", "visible": true },
-                  { "fieldName": "runs", "displayName": "Runs", "type": "integer", "visible": true },
-                  { "fieldName": "failed", "displayName": "Failed", "type": "integer", "visible": true },
-                  { "fieldName": "succeeded", "displayName": "Succeeded", "type": "integer", "visible": true },
-                  { "fieldName": "avg_duration_seconds", "displayName": "Avg sec", "type": "integer", "visible": true },
-                  { "fieldName": "p95_duration_seconds", "displayName": "P95 sec", "type": "integer", "visible": true }
+                  {
+                    "fieldName": "job_type",
+                    "displayName": "Job type"
+                  },
+                  {
+                    "fieldName": "run_category",
+                    "displayName": "Category"
+                  },
+                  {
+                    "fieldName": "runs",
+                    "displayName": "Runs"
+                  },
+                  {
+                    "fieldName": "failed",
+                    "displayName": "Failed"
+                  },
+                  {
+                    "fieldName": "succeeded",
+                    "displayName": "Succeeded"
+                  },
+                  {
+                    "fieldName": "avg_duration_seconds",
+                    "displayName": "Avg sec"
+                  },
+                  {
+                    "fieldName": "p95_duration_seconds",
+                    "displayName": "P95 sec"
+                  }
                 ]
               }
             }
           }
         },
         {
-          "position": { "x": 3, "y": 3, "width": 3, "height": 5 },
+          "position": {
+            "x": 3,
+            "y": 3,
+            "width": 3,
+            "height": 5
+          },
           "widget": {
             "name": "by_trigger",
             "queries": [
@@ -215,34 +355,72 @@
                   "datasetName": "runs_by_trigger",
                   "disaggregated": true,
                   "fields": [
-                    { "expression": "`trigger_type`", "name": "trigger_type" },
-                    { "expression": "`job_type`", "name": "job_type" },
-                    { "expression": "`runs`", "name": "runs" },
-                    { "expression": "`failed`", "name": "failed" },
-                    { "expression": "`avg_duration_seconds`", "name": "avg_duration_seconds" }
+                    {
+                      "expression": "`trigger_type`",
+                      "name": "trigger_type"
+                    },
+                    {
+                      "expression": "`job_type`",
+                      "name": "job_type"
+                    },
+                    {
+                      "expression": "`runs`",
+                      "name": "runs"
+                    },
+                    {
+                      "expression": "`failed`",
+                      "name": "failed"
+                    },
+                    {
+                      "expression": "`avg_duration_seconds`",
+                      "name": "avg_duration_seconds"
+                    }
                   ]
                 }
               }
             ],
             "spec": {
-              "version": 1,
+              "version": 2,
               "widgetType": "table",
-              "frame": { "showTitle": true, "title": "By trigger × job type (7d)" },
+              "frame": {
+                "showTitle": true,
+                "title": "By trigger \u00d7 job type (7d)"
+              },
               "itemsPerPage": 25,
               "encodings": {
                 "columns": [
-                  { "fieldName": "trigger_type", "displayName": "Trigger", "type": "string", "visible": true },
-                  { "fieldName": "job_type", "displayName": "Job type", "type": "string", "visible": true },
-                  { "fieldName": "runs", "displayName": "Runs", "type": "integer", "visible": true },
-                  { "fieldName": "failed", "displayName": "Failed", "type": "integer", "visible": true },
-                  { "fieldName": "avg_duration_seconds", "displayName": "Avg sec", "type": "integer", "visible": true }
+                  {
+                    "fieldName": "trigger_type",
+                    "displayName": "Trigger"
+                  },
+                  {
+                    "fieldName": "job_type",
+                    "displayName": "Job type"
+                  },
+                  {
+                    "fieldName": "runs",
+                    "displayName": "Runs"
+                  },
+                  {
+                    "fieldName": "failed",
+                    "displayName": "Failed"
+                  },
+                  {
+                    "fieldName": "avg_duration_seconds",
+                    "displayName": "Avg sec"
+                  }
                 ]
               }
             }
           }
         },
         {
-          "position": { "x": 0, "y": 8, "width": 2, "height": 4 },
+          "position": {
+            "x": 0,
+            "y": 8,
+            "width": 2,
+            "height": 4
+          },
           "widget": {
             "name": "by_category",
             "queries": [
@@ -252,32 +430,64 @@
                   "datasetName": "runs_by_category",
                   "disaggregated": true,
                   "fields": [
-                    { "expression": "`run_category`", "name": "run_category" },
-                    { "expression": "`runs`", "name": "runs" },
-                    { "expression": "`failed`", "name": "failed" },
-                    { "expression": "`avg_duration_seconds`", "name": "avg_duration_seconds" }
+                    {
+                      "expression": "`run_category`",
+                      "name": "run_category"
+                    },
+                    {
+                      "expression": "`runs`",
+                      "name": "runs"
+                    },
+                    {
+                      "expression": "`failed`",
+                      "name": "failed"
+                    },
+                    {
+                      "expression": "`avg_duration_seconds`",
+                      "name": "avg_duration_seconds"
+                    }
                   ]
                 }
               }
             ],
             "spec": {
-              "version": 1,
+              "version": 2,
               "widgetType": "table",
-              "frame": { "showTitle": true, "title": "By category (7d)" },
+              "frame": {
+                "showTitle": true,
+                "title": "By category (7d)"
+              },
               "itemsPerPage": 10,
               "encodings": {
                 "columns": [
-                  { "fieldName": "run_category", "displayName": "Category", "type": "string", "visible": true },
-                  { "fieldName": "runs", "displayName": "Runs", "type": "integer", "visible": true },
-                  { "fieldName": "failed", "displayName": "Failed", "type": "integer", "visible": true },
-                  { "fieldName": "avg_duration_seconds", "displayName": "Avg sec", "type": "integer", "visible": true }
+                  {
+                    "fieldName": "run_category",
+                    "displayName": "Category"
+                  },
+                  {
+                    "fieldName": "runs",
+                    "displayName": "Runs"
+                  },
+                  {
+                    "fieldName": "failed",
+                    "displayName": "Failed"
+                  },
+                  {
+                    "fieldName": "avg_duration_seconds",
+                    "displayName": "Avg sec"
+                  }
                 ]
               }
             }
           }
         },
         {
-          "position": { "x": 2, "y": 8, "width": 4, "height": 4 },
+          "position": {
+            "x": 2,
+            "y": 8,
+            "width": 4,
+            "height": 4
+          },
           "widget": {
             "name": "by_status_type",
             "queries": [
@@ -287,32 +497,64 @@
                   "datasetName": "runs_by_status_type",
                   "disaggregated": true,
                   "fields": [
-                    { "expression": "`job_type`", "name": "job_type" },
-                    { "expression": "`status`", "name": "status" },
-                    { "expression": "`runs`", "name": "runs" },
-                    { "expression": "`avg_duration_seconds`", "name": "avg_duration_seconds" }
+                    {
+                      "expression": "`job_type`",
+                      "name": "job_type"
+                    },
+                    {
+                      "expression": "`status`",
+                      "name": "status"
+                    },
+                    {
+                      "expression": "`runs`",
+                      "name": "runs"
+                    },
+                    {
+                      "expression": "`avg_duration_seconds`",
+                      "name": "avg_duration_seconds"
+                    }
                   ]
                 }
               }
             ],
             "spec": {
-              "version": 1,
+              "version": 2,
               "widgetType": "table",
-              "frame": { "showTitle": true, "title": "Status × job type (7d)" },
+              "frame": {
+                "showTitle": true,
+                "title": "Status \u00d7 job type (7d)"
+              },
               "itemsPerPage": 25,
               "encodings": {
                 "columns": [
-                  { "fieldName": "job_type", "displayName": "Job type", "type": "string", "visible": true },
-                  { "fieldName": "status", "displayName": "Status", "type": "string", "visible": true },
-                  { "fieldName": "runs", "displayName": "Runs", "type": "integer", "visible": true },
-                  { "fieldName": "avg_duration_seconds", "displayName": "Avg sec", "type": "integer", "visible": true }
+                  {
+                    "fieldName": "job_type",
+                    "displayName": "Job type"
+                  },
+                  {
+                    "fieldName": "status",
+                    "displayName": "Status"
+                  },
+                  {
+                    "fieldName": "runs",
+                    "displayName": "Runs"
+                  },
+                  {
+                    "fieldName": "avg_duration_seconds",
+                    "displayName": "Avg sec"
+                  }
                 ]
               }
             }
           }
         },
         {
-          "position": { "x": 0, "y": 12, "width": 6, "height": 8 },
+          "position": {
+            "x": 0,
+            "y": 12,
+            "width": 6,
+            "height": 8
+          },
           "widget": {
             "name": "runs_table",
             "queries": [
@@ -322,35 +564,92 @@
                   "datasetName": "unified_runs",
                   "disaggregated": true,
                   "fields": [
-                    { "expression": "`start_time`", "name": "start_time" },
-                    { "expression": "`job_type`", "name": "job_type" },
-                    { "expression": "`run_category`", "name": "run_category" },
-                    { "expression": "`entity_name`", "name": "entity_name" },
-                    { "expression": "`status`", "name": "status" },
-                    { "expression": "`duration_seconds`", "name": "duration_seconds" },
-                    { "expression": "`trigger_type`", "name": "trigger_type" },
-                    { "expression": "`execution_type`", "name": "execution_type" },
-                    { "expression": "`executed_by`", "name": "executed_by" }
+                    {
+                      "expression": "`start_time`",
+                      "name": "start_time"
+                    },
+                    {
+                      "expression": "`job_type`",
+                      "name": "job_type"
+                    },
+                    {
+                      "expression": "`run_category`",
+                      "name": "run_category"
+                    },
+                    {
+                      "expression": "`entity_name`",
+                      "name": "entity_name"
+                    },
+                    {
+                      "expression": "`status`",
+                      "name": "status"
+                    },
+                    {
+                      "expression": "`duration_seconds`",
+                      "name": "duration_seconds"
+                    },
+                    {
+                      "expression": "`trigger_type`",
+                      "name": "trigger_type"
+                    },
+                    {
+                      "expression": "`execution_type`",
+                      "name": "execution_type"
+                    },
+                    {
+                      "expression": "`executed_by`",
+                      "name": "executed_by"
+                    }
                   ]
                 }
               }
             ],
             "spec": {
-              "version": 1,
+              "version": 2,
               "widgetType": "table",
-              "frame": { "showTitle": true, "title": "Recent runs" },
+              "frame": {
+                "showTitle": true,
+                "title": "Recent runs"
+              },
               "itemsPerPage": 50,
               "encodings": {
                 "columns": [
-                  { "fieldName": "start_time", "displayName": "Start", "type": "datetime", "visible": true },
-                  { "fieldName": "job_type", "displayName": "Job type", "type": "string", "visible": true },
-                  { "fieldName": "run_category", "displayName": "Category", "type": "string", "visible": true },
-                  { "fieldName": "entity_name", "displayName": "Entity", "type": "string", "visible": true },
-                  { "fieldName": "status", "displayName": "Status", "type": "string", "visible": true },
-                  { "fieldName": "duration_seconds", "displayName": "Duration (s)", "type": "integer", "visible": true },
-                  { "fieldName": "trigger_type", "displayName": "Trigger", "type": "string", "visible": true },
-                  { "fieldName": "execution_type", "displayName": "Execution", "type": "string", "visible": true },
-                  { "fieldName": "executed_by", "displayName": "Executed by", "type": "string", "visible": true }
+                  {
+                    "fieldName": "start_time",
+                    "displayName": "Start"
+                  },
+                  {
+                    "fieldName": "job_type",
+                    "displayName": "Job type"
+                  },
+                  {
+                    "fieldName": "run_category",
+                    "displayName": "Category"
+                  },
+                  {
+                    "fieldName": "entity_name",
+                    "displayName": "Entity"
+                  },
+                  {
+                    "fieldName": "status",
+                    "displayName": "Status"
+                  },
+                  {
+                    "fieldName": "duration_seconds",
+                    "displayName": "Duration (s)"
+                  },
+                  {
+                    "fieldName": "trigger_type",
+                    "displayName": "Trigger"
+                  },
+                  {
+                    "fieldName": "execution_type",
+                    "displayName": "Execution"
+                  },
+                  {
+                    "fieldName": "executed_by",
+                    "displayName": "Executed by"
+                  }
                 ]
               }
             }
