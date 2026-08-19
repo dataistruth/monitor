@@ -31,6 +31,5 @@ resources:
       # Long-running loop: cancel the run to stop. Change frequency via
       # bundle var monitor_frequency_seconds and redeploy.
       timeout_seconds: 0
-      # Cost-efficient serverless: longer cold start (~4-6 min), lower DBU usage.
-      # Fine for this long-running refresh loop (startup paid once per run).
-      performance_target: STANDARD
+      # Performance-optimized serverless: faster startup (warm pool).
+      performance_target: PERFORMANCE_OPTIMIZED
