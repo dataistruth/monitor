@@ -66,9 +66,9 @@ latest_clusters AS (
 
 run_clusters AS (
   SELECT
-    t.workspace_id,
-    CAST(t.job_run_id AS STRING) AS run_id,
-    array_join(collect_set(cid), ', ') AS cluster_ids,
+    e.workspace_id,
+    CAST(e.job_run_id AS STRING) AS run_id,
+    array_join(collect_set(e.cid), ', ') AS cluster_ids,
     array_join(collect_set(c.cluster_name), ', ') AS cluster_names,
     array_join(collect_set(c.cluster_source), ', ') AS cluster_sources,
     array_join(
@@ -81,26 +81,23 @@ run_clusters AS (
         END
       ),
       ', '
-    ) AS cluster_access_modes,
-    CASE
-      WHEN SUM(
-        CASE
-          WHEN c.cluster_id IS NULL AND cid IS NOT NULL THEN 1
-          ELSE 0
-        END
-      ) > 0 THEN true
-      ELSE false
-    END AS may_include_serverless_or_warehouse
-  FROM system.lakeflow.job_task_run_timeline t
-  INNER JOIN latest_100 l
-    ON t.workspace_id = l.workspace_id
-   AND CAST(t.job_run_id AS STRING) = CAST(l.run_id AS STRING)
-  LATERAL VIEW OUTER explode(COALESCE(t.compute_ids, array())) e AS cid
+    ) AS cluster_access_modes
+  FROM (
+    SELECT
+      t.workspace_id,
+      t.job_run_id,
+      cid
+    FROM system.lakeflow.job_task_run_timeline t
+    INNER JOIN latest_100 l
+      ON t.workspace_id = l.workspace_id
+     AND CAST(t.job_run_id AS STRING) = CAST(l.run_id AS STRING)
+    LATERAL VIEW OUTER explode(COALESCE(t.compute_ids, array())) lv AS cid
+    WHERE t.workspace_id = '{{workspace_id}}'
+  ) e
   LEFT JOIN latest_clusters c
-    ON t.workspace_id = c.workspace_id
+    ON e.workspace_id = c.workspace_id
    AND e.cid = c.cluster_id
-  WHERE t.workspace_id = '{{workspace_id}}'
-  GROUP BY t.workspace_id, CAST(t.job_run_id AS STRING)
+  GROUP BY e.workspace_id, CAST(e.job_run_id AS STRING)
 ),
 
 submitters AS (
