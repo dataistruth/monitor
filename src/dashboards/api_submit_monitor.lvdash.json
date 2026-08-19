@@ -1,0 +1,252 @@
+{
+  "datasets": [
+    {
+      "name": "api_runs",
+      "displayName": "API submitted runs (last 100)",
+      "query": "SELECT\n  recency_rank,\n  run_name AS job_run,\n  run_id,\n  submitted_by,\n  job_id,\n  submit_channel,\n  start_time,\n  end_time,\n  status,\n  duration_seconds,\n  parameter_keys AS parameters,\n  job_parameters_json,\n  ROUND(dbu_consumed, 2) AS dbu_consumed,\n  compute_billing_type,\n  cluster_running_on,\n  cluster_ids,\n  cluster_sources,\n  cluster_access_modes,\n  termination_code\nFROM api_submitted_runs\nORDER BY recency_rank\nLIMIT 100"
+    },
+    {
+      "name": "api_run_summary",
+      "displayName": "API run summary",
+      "query": "SELECT\n  COUNT(*) AS total_runs,\n  SUM(CASE WHEN status IN ('FAILED', 'ERROR', 'TIMEDOUT') THEN 1 ELSE 0 END) AS failed_runs,\n  SUM(CASE WHEN status IN ('SUCCEEDED', 'SUCCESS') THEN 1 ELSE 0 END) AS succeeded_runs,\n  ROUND(SUM(dbu_consumed), 1) AS total_dbus,\n  ROUND(AVG(dbu_consumed), 2) AS avg_dbus,\n  ROUND(AVG(duration_seconds), 0) AS avg_duration_seconds\nFROM api_submitted_runs"
+    },
+    {
+      "name": "api_params",
+      "displayName": "Run parameters",
+      "query": "SELECT\n  start_time,\n  run_name AS job_run,\n  run_id,\n  status,\n  parameter_scope,\n  task_key,\n  parameter_name,\n  parameter_value\nFROM api_submitted_run_params\nORDER BY start_time DESC, run_id, parameter_scope, task_key, parameter_name\nLIMIT 2000"
+    }
+  ],
+  "pages": [
+    {
+      "name": "main",
+      "displayName": "API Submit Monitor",
+      "layout": [
+        {
+          "position": { "x": 0, "y": 0, "width": 6, "height": 1 },
+          "widget": {
+            "name": "title",
+            "textbox_spec": "# API Submit Monitor\nLast **100** Submit Run / Run Now API jobs with **parameters**, **start/end**, **status**, **DBU consumption**, and **cluster running on**."
+          }
+        },
+        {
+          "position": { "x": 0, "y": 1, "width": 1, "height": 2 },
+          "widget": {
+            "name": "kpi_total",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "api_run_summary",
+                  "disaggregated": false,
+                  "fields": [{ "expression": "`total_runs`", "name": "total_runs" }]
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "frame": { "showTitle": true, "title": "Runs (last 100)" },
+              "encodings": {
+                "value": { "fieldName": "total_runs", "displayName": "Runs" }
+              }
+            }
+          }
+        },
+        {
+          "position": { "x": 1, "y": 1, "width": 1, "height": 2 },
+          "widget": {
+            "name": "kpi_ok",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "api_run_summary",
+                  "disaggregated": false,
+                  "fields": [{ "expression": "`succeeded_runs`", "name": "succeeded_runs" }]
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "frame": { "showTitle": true, "title": "Succeeded" },
+              "encodings": {
+                "value": { "fieldName": "succeeded_runs", "displayName": "Succeeded" }
+              }
+            }
+          }
+        },
+        {
+          "position": { "x": 2, "y": 1, "width": 1, "height": 2 },
+          "widget": {
+            "name": "kpi_failed",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "api_run_summary",
+                  "disaggregated": false,
+                  "fields": [{ "expression": "`failed_runs`", "name": "failed_runs" }]
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "frame": { "showTitle": true, "title": "Failed" },
+              "encodings": {
+                "value": { "fieldName": "failed_runs", "displayName": "Failed" }
+              }
+            }
+          }
+        },
+        {
+          "position": { "x": 3, "y": 1, "width": 1, "height": 2 },
+          "widget": {
+            "name": "kpi_dbus",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "api_run_summary",
+                  "disaggregated": false,
+                  "fields": [{ "expression": "`total_dbus`", "name": "total_dbus" }]
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "frame": { "showTitle": true, "title": "Total DBUs" },
+              "encodings": {
+                "value": { "fieldName": "total_dbus", "displayName": "DBUs" }
+              }
+            }
+          }
+        },
+        {
+          "position": { "x": 4, "y": 1, "width": 2, "height": 2 },
+          "widget": {
+            "name": "kpi_avg_dbus",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "api_run_summary",
+                  "disaggregated": false,
+                  "fields": [{ "expression": "`avg_dbus`", "name": "avg_dbus" }]
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "frame": { "showTitle": true, "title": "Avg DBUs / run" },
+              "encodings": {
+                "value": { "fieldName": "avg_dbus", "displayName": "Avg DBUs" }
+              }
+            }
+          }
+        },
+        {
+          "position": { "x": 0, "y": 3, "width": 6, "height": 10 },
+          "widget": {
+            "name": "runs_table",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "api_runs",
+                  "disaggregated": true,
+                  "fields": [
+                    { "expression": "`job_run`", "name": "job_run" },
+                    { "expression": "`run_id`", "name": "run_id" },
+                    { "expression": "`submitted_by`", "name": "submitted_by" },
+                    { "expression": "`parameters`", "name": "parameters" },
+                    { "expression": "`job_parameters_json`", "name": "job_parameters_json" },
+                    { "expression": "`start_time`", "name": "start_time" },
+                    { "expression": "`end_time`", "name": "end_time" },
+                    { "expression": "`status`", "name": "status" },
+                    { "expression": "`dbu_consumed`", "name": "dbu_consumed" },
+                    { "expression": "`cluster_running_on`", "name": "cluster_running_on" },
+                    { "expression": "`compute_billing_type`", "name": "compute_billing_type" },
+                    { "expression": "`run_id`", "name": "run_id" },
+                    { "expression": "`submit_channel`", "name": "submit_channel" },
+                    { "expression": "`duration_seconds`", "name": "duration_seconds" }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "widgetType": "table",
+              "frame": { "showTitle": true, "title": "Last 100 API job runs" },
+              "itemsPerPage": 50,
+              "encodings": {
+                "columns": [
+                  { "fieldName": "job_run", "displayName": "Job run", "type": "string", "visible": true },
+                  { "fieldName": "run_id", "displayName": "Run ID", "type": "string", "visible": true },
+                  { "fieldName": "submitted_by", "displayName": "Submitted by", "type": "string", "visible": true },
+                  { "fieldName": "parameters", "displayName": "Parameters", "type": "string", "visible": true },
+                  { "fieldName": "job_parameters_json", "displayName": "Parameter values", "type": "string", "visible": true },
+                  { "fieldName": "start_time", "displayName": "Start time", "type": "datetime", "visible": true },
+                  { "fieldName": "end_time", "displayName": "End time", "type": "datetime", "visible": true },
+                  { "fieldName": "status", "displayName": "Status", "type": "string", "visible": true },
+                  { "fieldName": "dbu_consumed", "displayName": "DBU consumption", "type": "float", "visible": true },
+                  { "fieldName": "cluster_running_on", "displayName": "Cluster running on", "type": "string", "visible": true },
+                  { "fieldName": "compute_billing_type", "displayName": "Compute type", "type": "string", "visible": true },
+                  { "fieldName": "run_id", "displayName": "Run ID", "type": "string", "visible": true },
+                  { "fieldName": "submit_channel", "displayName": "Channel", "type": "string", "visible": true },
+                  { "fieldName": "duration_seconds", "displayName": "Duration (s)", "type": "integer", "visible": true }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "position": { "x": 0, "y": 13, "width": 6, "height": 7 },
+          "widget": {
+            "name": "params_table",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "api_params",
+                  "disaggregated": true,
+                  "fields": [
+                    { "expression": "`start_time`", "name": "start_time" },
+                    { "expression": "`job_run`", "name": "job_run" },
+                    { "expression": "`run_id`", "name": "run_id" },
+                    { "expression": "`status`", "name": "status" },
+                    { "expression": "`parameter_scope`", "name": "parameter_scope" },
+                    { "expression": "`task_key`", "name": "task_key" },
+                    { "expression": "`parameter_name`", "name": "parameter_name" },
+                    { "expression": "`parameter_value`", "name": "parameter_value" }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "widgetType": "table",
+              "frame": { "showTitle": true, "title": "Parameters detail (job + task)" },
+              "itemsPerPage": 50,
+              "encodings": {
+                "columns": [
+                  { "fieldName": "start_time", "displayName": "Start time", "type": "datetime", "visible": true },
+                  { "fieldName": "job_run", "displayName": "Job run", "type": "string", "visible": true },
+                  { "fieldName": "run_id", "displayName": "Run ID", "type": "string", "visible": true },
+                  { "fieldName": "status", "displayName": "Status", "type": "string", "visible": true },
+                  { "fieldName": "parameter_scope", "displayName": "Scope", "type": "string", "visible": true },
+                  { "fieldName": "task_key", "displayName": "Task", "type": "string", "visible": true },
+                  { "fieldName": "parameter_name", "displayName": "Parameter", "type": "string", "visible": true },
+                  { "fieldName": "parameter_value", "displayName": "Value", "type": "string", "visible": true }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
