@@ -100,6 +100,38 @@ run_clusters AS (
   GROUP BY e.workspace_id, CAST(e.job_run_id AS STRING)
 ),
 
+-- Cluster-wide DBUs billed while the run was active. Use when per-run
+-- attribution is unavailable (all-purpose compute has no job_run_id in billing).
+-- This is cluster-level, so concurrent workloads are included.
+run_cluster_window_dbus AS (
+  SELECT
+    e.workspace_id,
+    e.run_id,
+    ROUND(SUM(u.usage_quantity), 4) AS cluster_dbu_during_run
+  FROM (
+    SELECT
+      l.workspace_id,
+      CAST(l.run_id AS STRING) AS run_id,
+      l.start_time,
+      l.end_time,
+      cid
+    FROM system.lakeflow.job_task_run_timeline t
+    INNER JOIN latest_n l
+      ON t.workspace_id = l.workspace_id
+     AND CAST(t.job_run_id AS STRING) = CAST(l.run_id AS STRING)
+    LATERAL VIEW explode(COALESCE(t.compute_ids, array())) lv AS cid
+    WHERE t.workspace_id = '{{workspace_id}}'
+  ) e
+  INNER JOIN system.billing.usage u
+    ON u.workspace_id = e.workspace_id
+   AND u.usage_metadata.cluster_id = e.cid
+  WHERE u.usage_unit = 'DBU'
+    AND u.usage_date >= CURRENT_DATE() - INTERVAL 30 DAYS
+    AND u.usage_start_time < e.end_time
+    AND u.usage_end_time > e.start_time
+  GROUP BY e.workspace_id, e.run_id
+),
+
 submitters AS (
   SELECT
     a.workspace_id,
@@ -216,6 +248,7 @@ SELECT
   to_json(l.job_parameters) AS job_parameters_json,
   array_join(map_keys(COALESCE(l.job_parameters, map())), ', ') AS parameter_keys,
   COALESCE(d.dbu_consumed, 0) AS dbu_consumed,
+  COALESCE(w.cluster_dbu_during_run, 0) AS cluster_dbu_during_run,
   d.sku_names,
   d.compute_billing_type,
   rc.cluster_ids,
@@ -236,6 +269,9 @@ LEFT JOIN run_dbus d
 LEFT JOIN run_clusters rc
   ON l.workspace_id = rc.workspace_id
  AND CAST(l.run_id AS STRING) = rc.run_id
+LEFT JOIN run_cluster_window_dbus w
+  ON l.workspace_id = w.workspace_id
+ AND CAST(l.run_id AS STRING) = w.run_id
 LEFT JOIN submitters s
   ON l.workspace_id = s.workspace_id
  AND CAST(l.run_id AS STRING) = CAST(s.run_id AS STRING)

@@ -3,12 +3,12 @@
     {
       "name": "api_runs",
       "displayName": "API submitted runs",
-      "query": "SELECT\n  recency_rank,\n  job_nm,\n  run_name,\n  run_id,\n  job_id,\n  submitted_by,\n  submit_channel,\n  start_time,\n  end_time,\n  status,\n  duration_seconds,\n  ROUND(dbu_consumed, 2) AS dbu_consumed,\n  cluster_names,\n  cluster_running_on,\n  compute_billing_type,\n  job_parameters_json AS parameters\nFROM api_submitted_runs\nORDER BY recency_rank"
+      "query": "SELECT\n  recency_rank,\n  job_nm,\n  run_id,\n  job_id,\n  run_name,\n  submitted_by,\n  submit_channel,\n  run_type,\n  trigger_type,\n  status,\n  termination_code,\n  start_time,\n  end_time,\n  duration_seconds,\n  ROUND(dbu_consumed, 3) AS dbu_consumed,\n  ROUND(cluster_dbu_during_run, 3) AS cluster_dbu_during_run,\n  COALESCE(compute_billing_type, 'CLASSIC') AS compute_billing_type,\n  cluster_running_on,\n  cluster_names,\n  cluster_ids,\n  cluster_sources,\n  cluster_access_modes,\n  parameter_keys,\n  job_parameters_json\nFROM api_submitted_runs\nORDER BY recency_rank"
     },
     {
       "name": "api_run_summary",
       "displayName": "API run summary",
-      "query": "SELECT\n  COUNT(*) AS total_runs,\n  SUM(CASE WHEN status IN ('FAILED', 'ERROR', 'TIMEDOUT') THEN 1 ELSE 0 END) AS failed_runs,\n  SUM(CASE WHEN status IN ('SUCCEEDED', 'SUCCESS') THEN 1 ELSE 0 END) AS succeeded_runs,\n  ROUND(SUM(dbu_consumed), 1) AS total_dbus,\n  ROUND(AVG(dbu_consumed), 2) AS avg_dbus\nFROM api_submitted_runs"
+      "query": "SELECT\n  COUNT(*) AS total_runs,\n  SUM(CASE WHEN status IN ('SUCCEEDED', 'SUCCESS') THEN 1 ELSE 0 END) AS succeeded_runs,\n  SUM(CASE WHEN status IN ('FAILED', 'ERROR', 'TIMEDOUT') THEN 1 ELSE 0 END) AS failed_runs,\n  ROUND(SUM(cluster_dbu_during_run), 1) AS total_dbus,\n  ROUND(AVG(duration_seconds), 0) AS avg_run_seconds\nFROM api_submitted_runs"
     }
   ],
   "pages": [
@@ -20,7 +20,7 @@
           "position": { "x": 0, "y": 0, "width": 6, "height": 1 },
           "widget": {
             "name": "title",
-            "textbox_spec": "# API Submit Monitor\nSearch by **job name**. Table is `api_submitted_runs` only. Row count is bundle var `api_submit_last_n_runs` (default 100)."
+            "textbox_spec": "# API Submit Monitor\nLast N API-submitted job runs (bundle var `api_submit_last_n_runs`). Use the **Search job name** filter above, or the search icon on the Job name / Run name columns."
           }
         },
         {
@@ -46,11 +46,7 @@
               "frame": { "showTitle": true, "title": "Search job name" },
               "encodings": {
                 "fields": [
-                  {
-                    "displayName": "Job name",
-                    "fieldName": "job_nm",
-                    "queryName": "filter_job_nm"
-                  }
+                  { "displayName": "Job name", "fieldName": "job_nm", "queryName": "filter_job_nm" }
                 ]
               }
             }
@@ -59,16 +55,16 @@
         {
           "position": { "x": 3, "y": 1, "width": 3, "height": 1 },
           "widget": {
-            "name": "filter_run_name",
+            "name": "filter_status",
             "queries": [
               {
-                "name": "filter_run_name",
+                "name": "filter_status",
                 "query": {
                   "datasetName": "api_runs",
                   "disaggregated": false,
                   "fields": [
-                    { "expression": "`run_name`", "name": "run_name" },
-                    { "expression": "COUNT_IF(`associative_filter_predicate_group`)", "name": "run_name_associativity" }
+                    { "expression": "`status`", "name": "status" },
+                    { "expression": "COUNT_IF(`associative_filter_predicate_group`)", "name": "status_associativity" }
                   ]
                 }
               }
@@ -76,14 +72,10 @@
             "spec": {
               "version": 2,
               "widgetType": "filter-multi-select",
-              "frame": { "showTitle": true, "title": "Search run_name" },
+              "frame": { "showTitle": true, "title": "Status" },
               "encodings": {
                 "fields": [
-                  {
-                    "displayName": "Run name",
-                    "fieldName": "run_name",
-                    "queryName": "filter_run_name"
-                  }
+                  { "displayName": "Status", "fieldName": "status", "queryName": "filter_status" }
                 ]
               }
             }
@@ -106,10 +98,8 @@
             "spec": {
               "version": 2,
               "widgetType": "counter",
-              "frame": { "showTitle": true, "title": "Runs (last N)" },
-              "encodings": {
-                "value": { "fieldName": "total_runs", "displayName": "Runs" }
-              }
+              "frame": { "showTitle": true, "title": "Runs" },
+              "encodings": { "value": { "fieldName": "total_runs", "displayName": "Runs" } }
             }
           }
         },
@@ -131,9 +121,7 @@
               "version": 2,
               "widgetType": "counter",
               "frame": { "showTitle": true, "title": "Succeeded" },
-              "encodings": {
-                "value": { "fieldName": "succeeded_runs", "displayName": "Succeeded" }
-              }
+              "encodings": { "value": { "fieldName": "succeeded_runs", "displayName": "Succeeded" } }
             }
           }
         },
@@ -155,9 +143,7 @@
               "version": 2,
               "widgetType": "counter",
               "frame": { "showTitle": true, "title": "Failed" },
-              "encodings": {
-                "value": { "fieldName": "failed_runs", "displayName": "Failed" }
-              }
+              "encodings": { "value": { "fieldName": "failed_runs", "displayName": "Failed" } }
             }
           }
         },
@@ -178,39 +164,35 @@
             "spec": {
               "version": 2,
               "widgetType": "counter",
-              "frame": { "showTitle": true, "title": "Total DBUs" },
-              "encodings": {
-                "value": { "fieldName": "total_dbus", "displayName": "DBUs" }
-              }
+              "frame": { "showTitle": true, "title": "Cluster DBUs in run windows" },
+              "encodings": { "value": { "fieldName": "total_dbus", "displayName": "DBUs" } }
             }
           }
         },
         {
           "position": { "x": 4, "y": 2, "width": 2, "height": 2 },
           "widget": {
-            "name": "kpi_avg_dbus",
+            "name": "kpi_runtime",
             "queries": [
               {
                 "name": "main_query",
                 "query": {
                   "datasetName": "api_run_summary",
                   "disaggregated": false,
-                  "fields": [{ "expression": "`avg_dbus`", "name": "avg_dbus" }]
+                  "fields": [{ "expression": "`avg_run_seconds`", "name": "avg_run_seconds" }]
                 }
               }
             ],
             "spec": {
               "version": 2,
               "widgetType": "counter",
-              "frame": { "showTitle": true, "title": "Avg DBUs / run" },
-              "encodings": {
-                "value": { "fieldName": "avg_dbus", "displayName": "Avg DBUs" }
-              }
+              "frame": { "showTitle": true, "title": "Avg run time (sec)" },
+              "encodings": { "value": { "fieldName": "avg_run_seconds", "displayName": "Avg sec" } }
             }
           }
         },
         {
-          "position": { "x": 0, "y": 4, "width": 6, "height": 12 },
+          "position": { "x": 0, "y": 4, "width": 6, "height": 14 },
           "widget": {
             "name": "runs_table",
             "queries": [
@@ -221,16 +203,28 @@
                   "disaggregated": true,
                   "fields": [
                     { "expression": "`job_nm`", "name": "job_nm" },
+                    { "expression": "`run_id`", "name": "run_id" },
+                    { "expression": "`job_id`", "name": "job_id" },
                     { "expression": "`run_name`", "name": "run_name" },
-                    { "expression": "`cluster_names`", "name": "cluster_names" },
-                    { "expression": "`cluster_running_on`", "name": "cluster_running_on" },
-                    { "expression": "`dbu_consumed`", "name": "dbu_consumed" },
+                    { "expression": "`submitted_by`", "name": "submitted_by" },
+                    { "expression": "`submit_channel`", "name": "submit_channel" },
+                    { "expression": "`run_type`", "name": "run_type" },
+                    { "expression": "`trigger_type`", "name": "trigger_type" },
+                    { "expression": "`status`", "name": "status" },
+                    { "expression": "`termination_code`", "name": "termination_code" },
                     { "expression": "`start_time`", "name": "start_time" },
                     { "expression": "`end_time`", "name": "end_time" },
-                    { "expression": "`status`", "name": "status" },
-                    { "expression": "`submitted_by`", "name": "submitted_by" },
-                    { "expression": "`parameters`", "name": "parameters" },
-                    { "expression": "`run_id`", "name": "run_id" }
+                    { "expression": "`duration_seconds`", "name": "duration_seconds" },
+                    { "expression": "`dbu_consumed`", "name": "dbu_consumed" },
+                    { "expression": "`cluster_dbu_during_run`", "name": "cluster_dbu_during_run" },
+                    { "expression": "`compute_billing_type`", "name": "compute_billing_type" },
+                    { "expression": "`cluster_running_on`", "name": "cluster_running_on" },
+                    { "expression": "`cluster_names`", "name": "cluster_names" },
+                    { "expression": "`cluster_ids`", "name": "cluster_ids" },
+                    { "expression": "`cluster_sources`", "name": "cluster_sources" },
+                    { "expression": "`cluster_access_modes`", "name": "cluster_access_modes" },
+                    { "expression": "`parameter_keys`", "name": "parameter_keys" },
+                    { "expression": "`job_parameters_json`", "name": "job_parameters_json" }
                   ]
                 }
               }
@@ -238,21 +232,305 @@
             "spec": {
               "version": 1,
               "widgetType": "table",
-              "frame": { "showTitle": true, "title": "API job runs" },
-              "itemsPerPage": 50,
+              "allowHTMLByDefault": false,
+              "condensed": true,
+              "withRowNumber": false,
+              "itemsPerPage": 100,
+              "paginationSize": "default",
+              "frame": { "showTitle": true, "title": "API job runs — full details" },
               "encodings": {
                 "columns": [
-                  { "fieldName": "job_nm", "displayName": "Job name", "type": "string", "visible": true },
-                  { "fieldName": "run_name", "displayName": "Run name", "type": "string", "visible": true },
-                  { "fieldName": "cluster_names", "displayName": "Cluster name", "type": "string", "visible": true },
-                  { "fieldName": "cluster_running_on", "displayName": "Cluster running on", "type": "string", "visible": true },
-                  { "fieldName": "dbu_consumed", "displayName": "DBU", "type": "float", "visible": true },
-                  { "fieldName": "start_time", "displayName": "Start time", "type": "datetime", "visible": true },
-                  { "fieldName": "end_time", "displayName": "End time", "type": "datetime", "visible": true },
-                  { "fieldName": "status", "displayName": "Status", "type": "string", "visible": true },
-                  { "fieldName": "submitted_by", "displayName": "Submitted by", "type": "string", "visible": true },
-                  { "fieldName": "parameters", "displayName": "Parameters", "type": "string", "visible": true },
-                  { "fieldName": "run_id", "displayName": "Run ID", "type": "string", "visible": true }
+                  {
+                    "fieldName": "job_nm",
+                    "displayName": "Job name",
+                    "title": "Job name",
+                    "type": "string",
+                    "displayAs": "string",
+                    "alignContent": "left",
+                    "allowSearch": true,
+                    "order": 0,
+                    "visible": true,
+                    "preserveWhitespace": false,
+                    "useMonospaceFont": false
+                  },
+                  {
+                    "fieldName": "run_id",
+                    "displayName": "Run ID",
+                    "title": "Run ID",
+                    "type": "string",
+                    "displayAs": "string",
+                    "alignContent": "left",
+                    "allowSearch": true,
+                    "order": 1,
+                    "visible": true,
+                    "preserveWhitespace": false,
+                    "useMonospaceFont": false
+                  },
+                  {
+                    "fieldName": "job_id",
+                    "displayName": "Job ID",
+                    "title": "Job ID",
+                    "type": "string",
+                    "displayAs": "string",
+                    "alignContent": "left",
+                    "allowSearch": true,
+                    "order": 2,
+                    "visible": true,
+                    "preserveWhitespace": false,
+                    "useMonospaceFont": false
+                  },
+                  {
+                    "fieldName": "run_name",
+                    "displayName": "Run name",
+                    "title": "Run name",
+                    "type": "string",
+                    "displayAs": "string",
+                    "alignContent": "left",
+                    "allowSearch": true,
+                    "order": 3,
+                    "visible": true,
+                    "preserveWhitespace": false,
+                    "useMonospaceFont": false
+                  },
+                  {
+                    "fieldName": "submitted_by",
+                    "displayName": "Submitted by",
+                    "title": "Submitted by",
+                    "type": "string",
+                    "displayAs": "string",
+                    "alignContent": "left",
+                    "allowSearch": true,
+                    "order": 4,
+                    "visible": true,
+                    "preserveWhitespace": false,
+                    "useMonospaceFont": false
+                  },
+                  {
+                    "fieldName": "submit_channel",
+                    "displayName": "Channel",
+                    "title": "Channel",
+                    "type": "string",
+                    "displayAs": "string",
+                    "alignContent": "left",
+                    "order": 5,
+                    "visible": true,
+                    "preserveWhitespace": false,
+                    "useMonospaceFont": false
+                  },
+                  {
+                    "fieldName": "run_type",
+                    "displayName": "Run type",
+                    "title": "Run type",
+                    "type": "string",
+                    "displayAs": "string",
+                    "alignContent": "left",
+                    "order": 6,
+                    "visible": true,
+                    "preserveWhitespace": false,
+                    "useMonospaceFont": false
+                  },
+                  {
+                    "fieldName": "trigger_type",
+                    "displayName": "Trigger",
+                    "title": "Trigger",
+                    "type": "string",
+                    "displayAs": "string",
+                    "alignContent": "left",
+                    "order": 7,
+                    "visible": true,
+                    "preserveWhitespace": false,
+                    "useMonospaceFont": false
+                  },
+                  {
+                    "fieldName": "status",
+                    "displayName": "Status",
+                    "title": "Status",
+                    "type": "string",
+                    "displayAs": "string",
+                    "alignContent": "left",
+                    "allowSearch": true,
+                    "order": 8,
+                    "visible": true,
+                    "preserveWhitespace": false,
+                    "useMonospaceFont": false
+                  },
+                  {
+                    "fieldName": "termination_code",
+                    "displayName": "Termination code",
+                    "title": "Termination code",
+                    "type": "string",
+                    "displayAs": "string",
+                    "alignContent": "left",
+                    "order": 9,
+                    "visible": true,
+                    "preserveWhitespace": false,
+                    "useMonospaceFont": false
+                  },
+                  {
+                    "fieldName": "start_time",
+                    "displayName": "Start time",
+                    "title": "Start time",
+                    "type": "datetime",
+                    "displayAs": "datetime",
+                    "dateTimeFormat": "YYYY-MM-DD HH:mm:ss",
+                    "alignContent": "right",
+                    "order": 10,
+                    "visible": true,
+                    "preserveWhitespace": false,
+                    "useMonospaceFont": false
+                  },
+                  {
+                    "fieldName": "end_time",
+                    "displayName": "End time",
+                    "title": "End time",
+                    "type": "datetime",
+                    "displayAs": "datetime",
+                    "dateTimeFormat": "YYYY-MM-DD HH:mm:ss",
+                    "alignContent": "right",
+                    "order": 11,
+                    "visible": true,
+                    "preserveWhitespace": false,
+                    "useMonospaceFont": false
+                  },
+                  {
+                    "fieldName": "duration_seconds",
+                    "displayName": "Run time (s)",
+                    "title": "Run time (s)",
+                    "type": "integer",
+                    "displayAs": "number",
+                    "numberFormat": "0",
+                    "alignContent": "right",
+                    "order": 12,
+                    "visible": true,
+                    "preserveWhitespace": false,
+                    "useMonospaceFont": false
+                  },
+                  {
+                    "fieldName": "dbu_consumed",
+                    "displayName": "DBU (per run)",
+                    "title": "DBU (per run)",
+                    "type": "float",
+                    "displayAs": "number",
+                    "numberFormat": "0.000",
+                    "alignContent": "right",
+                    "order": 13,
+                    "visible": true,
+                    "preserveWhitespace": false,
+                    "useMonospaceFont": false
+                  },
+                  {
+                    "fieldName": "cluster_dbu_during_run",
+                    "displayName": "DBU (cluster window)",
+                    "title": "DBU (cluster window)",
+                    "type": "float",
+                    "displayAs": "number",
+                    "numberFormat": "0.000",
+                    "alignContent": "right",
+                    "order": 14,
+                    "visible": true,
+                    "preserveWhitespace": false,
+                    "useMonospaceFont": false
+                  },
+                  {
+                    "fieldName": "compute_billing_type",
+                    "displayName": "Compute type",
+                    "title": "Compute type",
+                    "type": "string",
+                    "displayAs": "string",
+                    "alignContent": "left",
+                    "order": 15,
+                    "visible": true,
+                    "preserveWhitespace": false,
+                    "useMonospaceFont": false
+                  },
+                  {
+                    "fieldName": "cluster_running_on",
+                    "displayName": "Cluster running on",
+                    "title": "Cluster running on",
+                    "type": "string",
+                    "displayAs": "string",
+                    "alignContent": "left",
+                    "allowSearch": true,
+                    "order": 16,
+                    "visible": true,
+                    "preserveWhitespace": false,
+                    "useMonospaceFont": false
+                  },
+                  {
+                    "fieldName": "cluster_names",
+                    "displayName": "Cluster name",
+                    "title": "Cluster name",
+                    "type": "string",
+                    "displayAs": "string",
+                    "alignContent": "left",
+                    "allowSearch": true,
+                    "order": 17,
+                    "visible": true,
+                    "preserveWhitespace": false,
+                    "useMonospaceFont": false
+                  },
+                  {
+                    "fieldName": "cluster_ids",
+                    "displayName": "Cluster ID",
+                    "title": "Cluster ID",
+                    "type": "string",
+                    "displayAs": "string",
+                    "alignContent": "left",
+                    "order": 18,
+                    "visible": true,
+                    "preserveWhitespace": false,
+                    "useMonospaceFont": false
+                  },
+                  {
+                    "fieldName": "cluster_sources",
+                    "displayName": "Cluster source",
+                    "title": "Cluster source",
+                    "type": "string",
+                    "displayAs": "string",
+                    "alignContent": "left",
+                    "order": 19,
+                    "visible": true,
+                    "preserveWhitespace": false,
+                    "useMonospaceFont": false
+                  },
+                  {
+                    "fieldName": "cluster_access_modes",
+                    "displayName": "Access mode",
+                    "title": "Access mode",
+                    "type": "string",
+                    "displayAs": "string",
+                    "alignContent": "left",
+                    "order": 20,
+                    "visible": true,
+                    "preserveWhitespace": false,
+                    "useMonospaceFont": false
+                  },
+                  {
+                    "fieldName": "parameter_keys",
+                    "displayName": "Parameter keys",
+                    "title": "Parameter keys",
+                    "type": "string",
+                    "displayAs": "string",
+                    "alignContent": "left",
+                    "allowSearch": true,
+                    "order": 21,
+                    "visible": true,
+                    "preserveWhitespace": false,
+                    "useMonospaceFont": false
+                  },
+                  {
+                    "fieldName": "job_parameters_json",
+                    "displayName": "Parameters (JSON)",
+                    "title": "Parameters (JSON)",
+                    "type": "string",
+                    "displayAs": "string",
+                    "alignContent": "left",
+                    "allowSearch": true,
+                    "order": 22,
+                    "visible": true,
+                    "preserveWhitespace": false,
+                    "useMonospaceFont": false
+                  }
                 ]
               }
             }
