@@ -1,0 +1,8 @@
+{
+  "access_control_list": [
+    {
+      "group_name": "ipacs_dev_team",
+      "permission_level": "CAN_MANAGE"
+    }
+  ]
+}
