@@ -1,0 +1,24 @@
+variables:
+  cluster_jcs1:
+    description: JCS1 — 2 workers on e2e_standard_pool
+    type: complex
+    default:
+      spark_version: "15.4.x-scala2.12"
+      instance_pool_id: ${var.standard_pool_id}
+      num_workers: 2
+
+  cluster_jcs2:
+    description: JCS2 — 4 workers on e2e_standard_pool
+    type: complex
+    default:
+      spark_version: "15.4.x-scala2.12"
+      instance_pool_id: ${var.standard_pool_id}
+      num_workers: 4
+
+  cluster_jcs3:
+    description: JCS3 — 8 workers on e2e_standard_pool
+    type: complex
+    default:
+      spark_version: "15.4.x-scala2.12"
+      instance_pool_id: ${var.standard_pool_id}
+      num_workers: 8

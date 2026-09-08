@@ -1,0 +1,33 @@
+bundle:
+  name: monitor_e2e
+
+# E2E smoke test: standard pool + JCS1/JCS2/JCS3 job clusters + hello print job.
+# Pool created via api/e2e_provision_pool.sh (REST API).
+include:
+  - resources/compute/cluster_variables.yml
+  - resources/jobs/*.yml
+
+sync:
+  paths:
+    - scripts
+
+variables:
+  standard_pool_id:
+    description: Azure standard pool ID (e2e_standard_pool)
+  grant_group:
+    description: Group granted CAN_MANAGE on e2e job
+    default: ipacs_dev_team
+  job_alert_email:
+    default: e2e-test@example.com
+  job_max_retries:
+    default: 1
+
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      profile: DEFAULT
+    variables:
+      grant_group: ipacs_dev_team
+      job_max_retries: 1

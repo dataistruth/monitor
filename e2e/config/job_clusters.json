@@ -1,0 +1,13 @@
+{
+  "description": "Monitor E2E job cluster keys",
+  "job_clusters": {
+    "JCS1": "cluster_jcs1",
+    "JCS2": "cluster_jcs2",
+    "JCS3": "cluster_jcs3"
+  },
+  "workers": {
+    "JCS1": 2,
+    "JCS2": 4,
+    "JCS3": 8
+  }
+}
